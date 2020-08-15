@@ -1,18 +1,12 @@
-
 Ext.onReady(function() {
-	
 	function manual_start(){
-		console.log( 'manual_start' );
 		document.getElementById('converter').innerHTML= "Поиск изображений";
 		fetch_converter('get');
-		
 	}
 	
-	function files_iterator(){
+	function files_iterator(){// Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
 		for (var i = 0, length = localStorage.length; i < length; i++) {
 			let key= localStorage.key(i);
-			
-			//console.log( localStorage.key(i), ' = ', localStorage.getItem(localStorage.key(i)) );
 			
 			if( key.includes('convert_img') ){
 				let file= localStorage.getItem(key);
@@ -29,7 +23,8 @@ Ext.onReady(function() {
 		}
 		
 		document.getElementById('converter').innerHTML= "Конвертация закончена";
-		// удалить дубликаты, перепроверить если есть то вернуть новый список
+		
+		fetch_converter('clean', file= false); // Clean deleted copy of files into /webp/ directory
 	}
 	
 	function fetch_converter(mode, file= false){
@@ -51,7 +46,7 @@ Ext.onReady(function() {
 			return response.json();
 		}).then(function(data) {
 			if(typeof( data.status ) != "undefined" && data.status == "complete"){
-				if(data.mode == 'get'){
+				if(data.mode == 'get'){// Get *.jp[e]g and *.png files list, for queue to converting
 					localStorage.setItem('converter', Date.now());
 					localStorage.setItem('converter_count', data.count);
 						
@@ -90,15 +85,10 @@ Ext.onReady(function() {
 	let converter_count= localStorage.getItem('converter_count');
 	
 	if( converter ) {
-		console.log( 'converter: ', converter );
-		
 		converter= parseFloat(converter);
 		converter_count= parseInt(converter_count);
 		
 		if(converter_count > 0) files_iterator();
-		
-		console.log( converter );
-		console.log( Date.now() );
 		
 		//if( converter < (Date.now() - 300) && converter_count == 0 ) fetch_converter('get');
 	} else {
