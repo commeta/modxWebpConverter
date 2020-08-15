@@ -24,7 +24,7 @@ Ext.onReady(function() {
 		
 		document.getElementById('converter').innerHTML= "Конвертация закончена";
 		
-		fetch_converter('clean', file= false); // Clean deleted copy of files into /webp/ directory
+		fetch_converter('clean'); // Clean deleted copy of files into /webp/ directory
 	}
 	
 	function fetch_converter(mode, file= false){
