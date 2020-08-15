@@ -1,5 +1,4 @@
 <?php
-
 $modx_base_path= dirname(dirname(__DIR__));
 define('MODX_BASE_PATH', $modx_base_path);
 
@@ -13,15 +12,25 @@ $json= json_decode($_POST['json'], true);
 
 
 if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directory
-	
-	//sleep(1);
+	$pattern= '';
+	for($i=1; $i <= 30; $i++){ // Create pattern for search files in subdirectories
+		$pattern.= ','.str_repeat('*/', $i);
+	}
+
+	foreach(glob(MODX_BASE_PATH.'{'.$pattern.'}{*.webp}', GLOB_BRACE) as $image){ // Search files recursive
+		$dest= MODX_BASE_PATH.str_replace([MODX_BASE_PATH.'/webp', '.webp'], '', $image);
+		if( !file_exists($dest) ) unlink($image);
+	} 
+
+	// delete empty dirs
+	system( sprintf("find '%s' -depth -type d -empty -delete", MODX_BASE_PATH.'/webp')  );
+
 	die(json_encode([
 		'status'=> 'complete', 
-		'mode'=> 'clean' 
+		'mode'=> 'clean'
 	]));
 
 }
-
 
 
 
@@ -87,13 +96,4 @@ die_convert:
 		'mode'=> 'convert'
 	]));
 }
-
-
-
-
-
-
-
-
 ?>
-
