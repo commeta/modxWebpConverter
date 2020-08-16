@@ -3,7 +3,8 @@
 
 if ($modx->event->name == 'OnWebPagePrerender' && strpos( $_SERVER['HTTP_ACCEPT'], 'image/webp' ) !== false) {
     $options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page');
-
+	
+    $cache_key= md5( MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
     $cached_webp_on_page= $modx->cacheManager->get($cache_key, $options);
     $output= &$modx->resource->_output;
 
