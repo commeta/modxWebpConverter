@@ -64,7 +64,7 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 
 
 if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
-	$cwebp= __DIR__.'/Binaries/cwebp-103-linux-x86-64';
+	$cwebp= __DIR__.'/Binaries/cwebp-103-linux-x86-64'; // for linux! any other os - replace this file from directory Binaries
 	$dest= MODX_BASE_PATH.'/webp'.$json['file'].'.webp';
 	$source= MODX_BASE_PATH.$json['file'];
 	$ext= strtolower(pathinfo($json['file'], PATHINFO_EXTENSION));
