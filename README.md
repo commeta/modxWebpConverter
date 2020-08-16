@@ -8,6 +8,7 @@ Install & use
 * converter.php - Server api
 * converter.js - Script for admin panel
 * Binaries - Binary utilities cwebp, there is for linux, windows, macos, by default connected for linux in the file converter.php, you can change it!
+The binaries are taken from https://github.com/rosell-dk/webp-convert
 
 2. Creating a plugin in the admin panel: webp_converter.php and hang it on the OnManagerPageBeforeRender event. After that, an icon will appear in the upper-right corner. when you click on it, the site directories will be scanned in the background, and a copy of each image in the webp subdirectory will be created. 
 i.e. /assets/logo.png - > /webp/assets/logo.png.webp
