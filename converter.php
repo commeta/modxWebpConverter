@@ -21,11 +21,13 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 
 	foreach(glob(MODX_BASE_PATH.'{'.$pattern.'}{*.webp}', GLOB_BRACE) as $image){ // Search files recursive
 		$dest= MODX_BASE_PATH.str_replace([MODX_BASE_PATH.'/webp', '.webp'], '', $image);
-		if( !file_exists($dest) ) unlink($image);
+		if( !file_exists($dest) ) {
+			unlink($image);
+			
+			$is_empty= count(glob(dirname($image).'/*')) ? true : false;
+			if(!$is_empty) rmdir(dirname($image)); // delete empty dirs
+		}		
 	} 
-
-	// delete empty dirs
-	system( sprintf("find '%s' -depth -type d -empty -delete", MODX_BASE_PATH.'/webp')  );
 
 	die(json_encode([
 		'status'=> 'complete', 
