@@ -2,7 +2,7 @@
 
 MODX Revolution is a plugin that converts image files to webp format.
 
-You can use a modified plugin to automatically replace images https://github.com/commeta/CacheMinifyLastModifiedAndWebp
+You can use the plugin to automatically replace images webp_replacer.php, install the plugin and assign the OnWebPagePrerender system event.
 
 To install the plugin, create a subdirectory in the path sitemodx.com/connectors/converter/ and unpack the contents of the archive into it.
 
