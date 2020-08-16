@@ -1,4 +1,6 @@
 <?php
+// Server api for converting files
+
 $modx_base_path= dirname(dirname(__DIR__));
 define('MODX_BASE_PATH', $modx_base_path);
 
