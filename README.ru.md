@@ -2,19 +2,14 @@
 
 MODX Revolution плагин, который осуществляет конвертацию графических файлов в формат webp.
 
-Для автоматической подмены изображений можно воспользоваться плагином webp_replacer.php, установите плагин и назначьте системное событие OnWebPagePrerender.
+Смысл в чем:
 
-Для установки плагина, создайте подкаталог в пути sitemodx.com/connectors/converter/ и распакуйте в него содержимое архива.
+1. Создаем подкаталог /connectors/converter/ и заливаем туда файлы:
+* converter.php - Серверное api
+* converter.js - Скрипт для админки
+* Binaries - Бинарники утилиты cwebp, там есть для linux, windows, macos, по умолчанию подключен для linux в файле converter.php можно поменять!
 
-Создайте плагин webp_converter.php в панели управления Modx Revo, и назначте системное событие OnManagerPageBeforeRender.
+2. Создаем в админке плагин: webp_converter.php и вешаем на событие OnManagerPageBeforeRender. После чего в правом верхнем углу появится значок, по клику запустится в фоне сканирование каталогов сайта, и будет создана копия каждой картинке в подкаталоге webp. 
+т.е. /assets/logo.png -> /webp/assets/logo.png.webp
 
-```webp_converter
-<?php
-switch ($modx->event->name) {
-    case 'OnManagerPageBeforeRender':
-        $modx->controller->addJavascript('/connectors/converter/converter.js');
-    break;
-}
-```
-
-В правом верхнем меню панели появится ссылка WEBP Конвертер.
+3. Создаем в админке плагин: webp_replacer.php и вешаем на событие OnWebPagePrerender. После чего все картинки в коде HTML будут заменены на webp, если браузер их поддерживает.
