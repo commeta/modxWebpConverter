@@ -1,4 +1,5 @@
 <?php
+// Modx revo plugin: replace jpg and png images to webp
 
 if ($modx->event->name == 'OnWebPagePrerender' && strpos( $_SERVER['HTTP_ACCEPT'], 'image/webp' ) !== false) {
     $options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page');
@@ -7,8 +8,7 @@ if ($modx->event->name == 'OnWebPagePrerender' && strpos( $_SERVER['HTTP_ACCEPT'
     $output= &$modx->resource->_output;
 
     if( empty($cached_webp_on_page) ){
-        $webp_on_page_real = [];
-        $webp_on_page_webp = [];
+        $webp_on_page= [];
         $uniq_imgs= [];
         preg_match_all('/<img[^>]+>/i',$output, $result);
         
@@ -29,21 +29,20 @@ if ($modx->event->name == 'OnWebPagePrerender' && strpos( $_SERVER['HTTP_ACCEPT'
          	 	        $webp_base= str_replace('//', '/', MODX_BASE_PATH.$webp);
          	 	        
          	 	        if( file_exists($abs_base) && file_exists($webp_base) ){
-         	 	            $webp_on_page_real[]= $img_real;
-         	 	            $webp_on_page_webp[]= $webp;
+         	 	            $webp_on_page[$img_real]= $webp;
          	 	        }
          	 	    }
          	 	}
         	}
         	
-        	$output= str_replace($webp_on_page_real, $webp_on_page_webp, $output);
+            $output = str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
         }
 
-        $modx->cacheManager->set($cache_key, serialize([$webp_on_page_real, $webp_on_page_webp]), 0, $options);
+        $modx->cacheManager->set($cache_key, serialize($webp_on_page), 0, $options);
     } else {
-        list($webp_on_page_real, $webp_on_page_webp) = unserialize($cached_webp_on_page);
-        if( count($webp_on_page_real) && count($webp_on_page_webp) ){
-            $output= str_replace($webp_on_page_real, $webp_on_page_webp, $output);
+        $webp_on_page= unserialize($cached_webp_on_page);
+        if( count($webp_on_page) ){
+            $output = str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
         }
     }
     return '';
@@ -86,4 +85,3 @@ function rel2abs_img( $rel, $base ) {
 	// absolute URL is ready!
 	return $abs;
 }
-
