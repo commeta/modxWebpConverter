@@ -1,3 +1,4 @@
+// Js api for Modx Admin Panel
 Ext.onReady(function() {
 	function manual_start(){
 		document.getElementById('converter').innerHTML= "Поиск изображений";
