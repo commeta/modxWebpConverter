@@ -8,6 +8,7 @@ MODX Revolution плагин, который осуществляет конве
 * converter.php - Серверное api
 * converter.js - Скрипт для админки
 * Binaries - Бинарники утилиты cwebp, там есть для linux, windows, macos, по умолчанию подключен для linux в файле converter.php, можно поменять!
+Бинарники взяты с https://github.com/rosell-dk/webp-convert
 
 2. Создаем в админке плагин: webp_converter.php и вешаем на событие OnManagerPageBeforeRender. После чего в правом верхнем углу появится значок, по клику запустится в фоне сканирование каталогов сайта, и будет создана копия каждой картинки в подкаталоге webp. 
 т.е. /assets/logo.png -> /webp/assets/logo.png.webp
