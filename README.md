@@ -2,19 +2,15 @@
 
 MODX Revolution is a plugin that converts image files to webp format.
 
-You can use the plugin to automatically replace images webp_replacer.php, install the plugin and assign the OnWebPagePrerender system event.
+Install & use
 
-To install the plugin, create a subdirectory in the path sitemodx.com/connectors/converter/ and unpack the contents of the archive into it.
+1. Create a subdirectory /connectors/converter/ and fill the files there:
+* converter.php - Server api
+* converter.js - Script for admin panel
+* Binaries - Бинарники утилиты cwebp, там есть для linux, windows, macos, по умолчанию подключен для linux в файле converter.php можно поменять!
+Binary utilities cwebp, there is for linux, windows, macos, by default connected for linux in the file converter.php you can change it!
 
-Create a plugin in the Modx Revo control panel, and assign the OnManagerPageBeforeRender system event
+2. Creating a plugin in the admin panel: webp_converter.php and hang it on the OnManagerPageBeforeRender event. After that, an icon will appear in the upper-right corner. when you click on it, the site directories will be scanned in the background, and a copy of each image in the webp subdirectory will be created. 
+i.e. /assets/logo.png - > /webp/assets/logo.png.webp
 
-```
-<?php
-switch ($modx->event->name) {
-    case 'OnManagerPageBeforeRender':
-        $modx->controller->addJavascript('/connectors/converter/converter.js');
-    break;
-}
-```
-
-The WEBP Converter link will appear in the upper-right menu of the panel.
+3. Creating a plugin in the admin panel: webp_replacer.php and hang it on the OnWebPagePrerender event. After that, all images in the HTML code will be replaced with webp, if the browser supports them.
