@@ -56,6 +56,7 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 }
 
 
+
 if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to converting
 	$pattern= '';
 	for($i=1; $i <= 30; $i++){ // Create pattern for search files in subdirectories
@@ -106,8 +107,9 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		]
 	];
 	
-	
+	if( !isset($suppliedBinaries[PHP_OS]) ) die(json_encode(['status'=> 'Bin file not found!']));
 	$bin= $suppliedBinaries[PHP_OS]; // Select OS
+
 	
 	if( is_array($bin) ){ // Check binary
 		foreach($bin as $b){
