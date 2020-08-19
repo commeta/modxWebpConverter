@@ -62,6 +62,9 @@ Ext.onReady(function() {
 				if(data.mode == 'convert'){
 					files_iterator();
 				}
+			} else {
+				if(typeof( data.status ) != "undefined") document.getElementById('converter').innerHTML= data.status;
+				else document.getElementById('converter').innerHTML= 'converter ошибка!';
 			}
 		}).catch(() => console.log('converter ошибка!'));
 	}
