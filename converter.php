@@ -85,6 +85,7 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 }
 
 
+
 if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
 	if( isset($json['cwebp']) && file_exists(__DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp']) ){
 		$cwebp= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp'];
@@ -127,6 +128,10 @@ die_convert:
 }
 
 
+
+////////////////////////////////////////////////////////////////////////
+// Functions
+
 function clearCache() { // Clear webp cache
 	global $modx;
 
@@ -135,7 +140,9 @@ function clearCache() { // Clear webp cache
 }
 
 
-function getBinary(){
+function getBinary(){ // Detect os and select converter command line tool
+	// https://github.com/rosell-dk/webp-convert
+	// https://developers.google.com/speed/webp/docs/precompiled
 	$cwebp_path= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR;
 
 	$suppliedBinaries = [
