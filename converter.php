@@ -43,7 +43,14 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 		$dest= BASE_PATH.str_replace([BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $image);
 		if( !file_exists($dest) ) {
 			unlink($image);
-			if( count(glob(dirname($image).DIRECTORY_SEPARATOR.'*')) == 0 ) rmdir(dirname($image)); // delete empty dirs
+			if( count(glob(dirname($image).DIRECTORY_SEPARATOR.'*')) == 0 ) { // delete empty dirs
+				rmdir(dirname($image)); 
+				
+				$parent_dir= dirname(dirname($image));
+				if( mb_strlen(BASE_PATH) < mb_strlen($parent_dir) && count(glob($parent_dir.DIRECTORY_SEPARATOR.'*')) == 0 ) {
+					rmdir($parent_dir); 
+				}
+			}
 		}
 	} 
 	
@@ -187,4 +194,5 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	return str_replace($cwebp_path, '', $cwebp);
 }
+
 ?>
