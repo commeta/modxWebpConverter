@@ -39,7 +39,7 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 		$pattern.= ','.str_repeat('*'.DIRECTORY_SEPARATOR, $i);
 	}
 
-	foreach(glob(BASE_PATH.'{'.$pattern.'}{*.webp}', GLOB_BRACE) as $image){ // Search files recursive
+	foreach(glob(BASE_PATH.DIRECTORY_SEPARATOR.'webp'.'{'.$pattern.'}{*.webp}', GLOB_BRACE) as $image){ // Search files recursive
 		$dest= BASE_PATH.str_replace([BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $image);
 		if( !file_exists($dest) ) {
 			unlink($image);
