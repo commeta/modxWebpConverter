@@ -1,4 +1,3 @@
-
 Ext.onReady(function() {
 	function manual_start(){
 		document.getElementById('converter').innerHTML= "Поиск изображений";
@@ -31,7 +30,8 @@ Ext.onReady(function() {
 	function fetch_converter(mode, file= false){
 		let upload = {
 			"mode": mode,
-			"file": file
+			"file": file,
+			"cwebp": file ? localStorage.getItem("converter_cwebp") : false
 		};
 
 		let data = new FormData();
@@ -50,6 +50,7 @@ Ext.onReady(function() {
 				if(data.mode == 'get'){// Get *.jp[e]g and *.png files list, for queue to converting
 					localStorage.setItem('converter', Date.now());
 					localStorage.setItem('converter_count', data.count);
+					localStorage.setItem('converter_cwebp', data.cwebp);
 						
 					data.images.forEach(function(file, index, created) {
 						localStorage.setItem('convert_img'+index, file);
