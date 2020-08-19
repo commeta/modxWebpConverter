@@ -1,4 +1,4 @@
-// Js api for Modx Admin Panel
+
 Ext.onReady(function() {
 	function manual_start(){
 		document.getElementById('converter').innerHTML= "Поиск изображений";
@@ -76,10 +76,10 @@ Ext.onReady(function() {
 	a.onclick= manual_start;
 	a.appendChild( text );
 	
-	let li = document.createElement("li");
-	li.appendChild(a);
-	modxUserMenu.prepend(li);
-  
+	let webpConverterLI = document.createElement("li");
+	webpConverterLI.appendChild(a);
+	modxUserMenu.insertBefore(webpConverterLI, modxUserMenu.firstChild);
+	
 	
 	// Check reload
 	let converter= localStorage.getItem('converter');
