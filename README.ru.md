@@ -17,7 +17,7 @@ MODX Revolution плагин, который осуществляет конве
 
 ### Рузультаты тестирования
 
-Протестировал на windows, linux. MODX Revolution 2.7.3-pl!
+Протестировал на windows 7 64bit, linux ubuntu 20.04 64bit. MODX Revolution 2.7.3-pl!
 
 Взял солянку jpg & png, 24382 файлов, 3385MB.
 
