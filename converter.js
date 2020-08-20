@@ -124,11 +124,11 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		}
 		
 		if( $ext == 'jpg' || $ext == 'jpeg'){
-			exec( sprintf("%s -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory '%s' -o '%s'", $cwebp, $source, $dest), $output, $return_var  );
+			exec( $cwebp.' -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory "'.$source.'" -o "'.$dest.'"', $output, $return_var);
 		}
 		
 		if( $ext == 'png' ){
-			exec( sprintf("%s -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory '%s' -o '%s'", $cwebp, $source, $dest), $output, $return_var  );
+			exec( $cwebp.' -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory "'.$source.'" -o "'.$dest.'"', $output, $return_var);
 		}
 	} else {
 		$output= '';
@@ -141,7 +141,6 @@ die_convert:
 	die(json_encode([
 		'status'=> 'complete', 
 		'mode'=> 'convert',
-		'output'=> $output,
 		'return_var'=> $return_var
 	]));
 }
