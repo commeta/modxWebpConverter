@@ -48,7 +48,6 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 		}
 	} 
 	
-	
  
 	$idir = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( BASE_PATH.DIRECTORY_SEPARATOR.'webp', FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::CHILD_FIRST );
  
@@ -131,7 +130,6 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 			exec( $cwebp.' -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory "'.$source.'" -o "'.$dest.'"', $output, $return_var);
 		}
 	} else {
-		$output= '';
 		$return_var= '';
 	}
 	
