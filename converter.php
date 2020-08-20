@@ -38,7 +38,7 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 	
 	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp');
 	
-	$idir = new RecursiveIteratorIterator(
+	$idir = new RecursiveIteratorIterator( // Delete empty dirs
 		new RecursiveDirectoryIterator(BASE_PATH.DIRECTORY_SEPARATOR.'webp', FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST
 	);
  
@@ -99,11 +99,19 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		}
 		
 		if( $ext == 'jpg' || $ext == 'jpeg'){
-			exec( $cwebp.' -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory "'.$source.'" -o "'.$dest.'"', $output, $return_var);
+			exec(
+				$cwebp.' -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory "'.$source.'" -o "'.$dest.'"',
+				$output,
+				$return_var
+			);
 		}
 		
 		if( $ext == 'png' ){
-			exec( $cwebp.' -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory "'.$source.'" -o "'.$dest.'"', $output, $return_var);
+			exec(
+				$cwebp.' -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory "'.$source.'" -o "'.$dest.'"',
+				$output,
+				$return_var
+			);
 		}
 	} else {
 		$return_var= '';
@@ -198,7 +206,11 @@ function recursive_search_img($dir, &$images){ // Search jpeg and png files recu
 		if(is_dir($dir.DIRECTORY_SEPARATOR.$file)){
 			recursive_search_img($dir.DIRECTORY_SEPARATOR.$file, $images);
 		} else {
-			if( strripos($file, '.jpg', -4) !== false || strripos($file, '.jpeg', -5) !== false || strripos($file, '.png', -4) !== false ){
+			if(
+				strripos($file, '.jpg', -4) !== false ||
+				strripos($file, '.jpeg', -5) !== false ||
+				strripos($file, '.png', -4) !== false
+			){
 				$img= str_replace(BASE_PATH, '', $dir.DIRECTORY_SEPARATOR.$file);
 				$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR.$img.'.webp';
 				
@@ -224,7 +236,11 @@ function recursive_search_webp($dir){ // Search webp files recursive
 			recursive_search_webp($dir.DIRECTORY_SEPARATOR.$file);
 		} else {
 			if( strripos($file, '.webp', -5) !== false ){
-				$dest= BASE_PATH.str_replace([BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $dir.DIRECTORY_SEPARATOR.$file);
+				$dest= BASE_PATH.str_replace(
+					[BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], 
+					'', 
+					$dir.DIRECTORY_SEPARATOR.$file
+				);
 				
 				if( !file_exists($dest) ) {
 					unlink($dir.DIRECTORY_SEPARATOR.$file);
