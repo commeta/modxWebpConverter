@@ -128,7 +128,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 			);
 		}
 	} else {
-		$return_var= '';
+		$return_var= -1;
 	}
 	
 
@@ -167,7 +167,7 @@ function getBinary(){ // Detect os and select converter command line tool
 			'cwebp-103-linux-x86-64-static',
 
 			// Old executable for systems in case both of the above fails
-			'cwebp-061-linux-x86-64',
+			'cwebp-061-linux-x86-64'
 		]
 	];
 	
@@ -260,7 +260,6 @@ function recursive_search_webp($dir){ // Search webp files recursive
 
 function recursive_remove_empty_dirs($dir){ // Remove empty dirs
 	$odir = opendir($dir);
-
 	$count_files= 0;
 	
 	while(($file = readdir($odir)) !== FALSE){
