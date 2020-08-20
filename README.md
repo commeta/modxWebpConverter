@@ -17,7 +17,7 @@ i.e. /assets/logo.png - > /webp/assets/logo.png.webp
 
 ### The results of testing
 
-Tested on windows 7 64bit, linux ubuntu 20.04 64bit. MODX Revolution 2.7.3-pl!
+Tested on Windows 7 64bit XAMPP, linux Ubuntu 20.04 64bit LAMP. MODX Revolution 2.7.3-pl!
 
 Took a selection of jpg & png, 24382 files, 3385MB.
 
