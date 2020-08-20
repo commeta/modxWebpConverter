@@ -38,7 +38,9 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 	
 	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp');
 	
-	$idir = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( BASE_PATH.DIRECTORY_SEPARATOR.'webp', FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::CHILD_FIRST );
+	$idir = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator(BASE_PATH.DIRECTORY_SEPARATOR.'webp', FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST
+	);
  
 	foreach( $idir as $v ){
 		if( $v->isDir() and $v->isWritable() ){
@@ -196,7 +198,7 @@ function recursive_search_img($dir, &$images){ // Search jpeg and png files recu
 		if(is_dir($dir.DIRECTORY_SEPARATOR.$file)){
 			recursive_search_img($dir.DIRECTORY_SEPARATOR.$file, $images);
 		} else {
-			if( stripos($file, '.jpg') !== false || stripos($file, '.jpeg') !== false || stripos($file, '.png') !== false ){
+			if( strripos($file, '.jpg', -4) !== false || strripos($file, '.jpeg', -5) !== false || strripos($file, '.png', -4) !== false ){
 				$img= str_replace(BASE_PATH, '', $dir.DIRECTORY_SEPARATOR.$file);
 				$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR.$img.'.webp';
 				
@@ -216,7 +218,7 @@ function recursive_search_webp($dir){ // Search webp files recursive
 	$odir = opendir($dir);
  
 	while(($file = readdir($odir)) !== FALSE){
-		if(	$file == '.' || $file == '..' )	continue;
+		if($file == '.' || $file == '..') continue;
 		
 		if(is_dir($dir.DIRECTORY_SEPARATOR.$file)){
 			recursive_search_webp($dir.DIRECTORY_SEPARATOR.$file);
