@@ -1,6 +1,7 @@
 <?php
 /*
  * Server api for converting files
+ * https://github.com/commeta/modxWebpConverter
  * 
  * Copyright 2020 commeta <dcs-spb@ya.ru>
  * 
@@ -25,10 +26,10 @@
 
 ////////////////////////////////////////////////////////////////////////
 // Init
+
 $BASE_PATH= dirname(dirname(__DIR__));
 define('BASE_PATH', $BASE_PATH);
 
-ignore_user_abort(true);
 set_time_limit(30);
 
 header('Content-type: application/json');
@@ -57,13 +58,17 @@ if(!$modx->user->hasSessionContext('mgr')) { // Check authorization
 
 if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directory
 	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
-
+	
+	ignore_user_abort(true);
+	set_time_limit(120);
+	
 	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove deleted copy webp files recursive
-	recursive_remove_empty_dirs(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove empty dirs
-
+	
 	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page'); // Clear webp modx cache
 	$modx->cacheManager->clean($options);
-		
+	
+	recursive_remove_empty_dirs(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove empty dirs
+
 die_clean:
 	
 	die(json_encode([
@@ -95,7 +100,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 	} else {
 		die(json_encode(['status'=> 'Wrong Bin file!']));
 	}
-	
+		
 	$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.$json['file'].'.webp';
 	$source= BASE_PATH.$json['file'];
 	$ext= strtolower(pathinfo($json['file'], PATHINFO_EXTENSION));
@@ -105,14 +110,14 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 	}
 
 	if(file_exists($source)){
-		$source_mtime= filemtime($source);
-		
 		if( file_exists($dest) ){
-			$dest_mtime= filemtime($dest);
-			if($dest_mtime > $source_mtime) goto die_convert;
+			if(filemtime($dest) > filemtime($source)) goto die_convert;
 		}
 		
-		if( $ext == 'jpg' || $ext == 'jpeg'){
+		ignore_user_abort(true);
+		set_time_limit(120);
+	
+		if($ext == 'jpg' || $ext == 'jpeg'){
 			exec(
 				$cwebp.' -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory "'.$source.'" -o "'.$dest.'"',
 				$output,
@@ -120,7 +125,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 			);
 		}
 		
-		if( $ext == 'png' ){
+		if($ext == 'png'){
 			exec(
 				$cwebp.' -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory "'.$source.'" -o "'.$dest.'"',
 				$output,
@@ -128,7 +133,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 			);
 		}
 	} else {
-		$return_var= -1;
+		$return_var= 127;
 	}
 	
 
@@ -145,7 +150,6 @@ die_convert:
 
 ////////////////////////////////////////////////////////////////////////
 // Functions
-
 
 function getBinary(){ // Detect os and select converter command line tool
 	// https://github.com/rosell-dk/webp-convert
@@ -198,7 +202,7 @@ function getBinary(){ // Detect os and select converter command line tool
 
 
 function recursive_search_img($dir, &$images){ // Search jpeg and png files recursive
-	$odir = opendir($dir);
+	$odir= opendir($dir);
  
 	while(($file = readdir($odir)) !== FALSE){
 		if(
@@ -232,7 +236,7 @@ function recursive_search_img($dir, &$images){ // Search jpeg and png files recu
 
 
 function recursive_search_webp($dir){ // Search webp files recursive
-	$odir = opendir($dir);
+	$odir= opendir($dir);
  
 	while(($file = readdir($odir)) !== FALSE){
 		if($file == '.' || $file == '..') continue;
@@ -242,8 +246,7 @@ function recursive_search_webp($dir){ // Search webp files recursive
 		} else {
 			if( strripos($file, '.webp', -5) !== false ){
 				$dest= BASE_PATH.str_replace(
-					[BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], 
-					'', 
+					[BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', 
 					$dir.DIRECTORY_SEPARATOR.$file
 				);
 				
@@ -262,7 +265,7 @@ function recursive_remove_empty_dirs($dir){ // Remove empty dirs
 	$odir = opendir($dir);
 	$count_files= 0;
 	
-	while(($file = readdir($odir)) !== FALSE){
+	while(($file= readdir($odir)) !== FALSE){
 		if($file == '.' || $file == '..') continue;
 		
 		$count_files++;
