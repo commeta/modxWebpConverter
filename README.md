@@ -20,7 +20,7 @@ i.e. /assets/logo.png - > /webp/assets/logo.png.webp
 Tested on windows and linux. 
 Took a selection of jpg & png, 24382 files, 3385MB.
 
-Everything worked fine, memory consumption is at a peak: on win 6 580 936, on lin 3 816 368.
+Everything worked fine, memory consumption is at a peak: on win 6 580 936b, on lin 3 816 368b.
 Scanning subdirectories took: 191ms SSD, 3123ms HDD.
 The resulting volume of compressed files: 1005MB, no loss in quality was noticed.
 
