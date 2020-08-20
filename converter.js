@@ -34,6 +34,8 @@ if(!$modx->user->hasSessionContext('mgr')) { // Check authorization
 // Json API
 
 if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directory
+	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
+	
 	$pattern= '';
 	for($i=1; $i <= 30; $i++){ // Create pattern for search files in subdirectories
 		$pattern.= ','.str_repeat('*'.DIRECTORY_SEPARATOR, $i);
@@ -45,6 +47,8 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 			unlink($image);
 		}
 	} 
+	
+	
  
 	$idir = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( BASE_PATH.DIRECTORY_SEPARATOR.'webp', FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::CHILD_FIRST );
  
@@ -54,7 +58,10 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 		}
 	} 	
 	
+	
 	clearCache();
+	
+die_clean:
 	
 	die(json_encode([
 		'status'=> 'complete', 
@@ -117,11 +124,11 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		}
 		
 		if( $ext == 'jpg' || $ext == 'jpeg'){
-			exec( sprintf("%s -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory '%s' -o '%s'", $cwebp, $source, $dest)  );
+			exec( sprintf("%s -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory '%s' -o '%s'", $cwebp, $source, $dest), $output, $return_var  );
 		}
 		
 		if( $ext == 'png' ){
-			exec( sprintf("%s -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory '%s' -o '%s'", $cwebp, $source, $dest)  );
+			exec( sprintf("%s -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory '%s' -o '%s'", $cwebp, $source, $dest), $output, $return_var  );
 		}
 	}
 	
@@ -130,7 +137,9 @@ die_convert:
 
 	die(json_encode([
 		'status'=> 'complete', 
-		'mode'=> 'convert'
+		'mode'=> 'convert',
+		'output'=>$output,
+		'return_var'=>$return_var
 	]));
 }
 
