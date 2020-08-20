@@ -18,6 +18,7 @@ i.e. /assets/logo.png - > /webp/assets/logo.png.webp
 ### The results of testing
 
 Tested on windows and linux. MODX Revolution 2.7.3-pl!
+
 Took a selection of jpg & png, 24382 files, 3385MB.
 
 Everything worked fine, memory consumption is at a peak: on win 6 580 936b, on lin 3 816 368b.
