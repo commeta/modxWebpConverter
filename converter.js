@@ -71,22 +71,21 @@ die_clean:
 
 
 if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to converting
-	$pattern= '';
-	for($i=1; $i <= 30; $i++){ // Create pattern for search files in subdirectories
-		$pattern.= ','.str_repeat('*'.DIRECTORY_SEPARATOR, $i);
-	}
-
-
+	$it  = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(BASE_PATH));
+	$ite = new RegexIterator($it, "#{.jpg$|.png$|.jpeg$}#i", RegexIterator::MATCH);
+   
 	$images= [];
-	foreach(glob(BASE_PATH.'{'.$pattern.'}{*.jpg,*.jpeg,*.png}', GLOB_BRACE) as $image){ // Search files recursive
-		$img= str_replace(BASE_PATH, '', $image);
+	
+	foreach ($ite as $file) {
+		$img= $ite->getSubPathname(); // Create pattern for search files in subdirectories
 		if( strpos($img, 'manager'.DIRECTORY_SEPARATOR) !== false || strpos($img, 'webp'.DIRECTORY_SEPARATOR) !== false) continue;
-
-		$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.$img.'.webp';
+        
+		$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR.$img.'.webp';
+		$image= BASE_PATH.DIRECTORY_SEPARATOR.$img;
 		if( file_exists($dest) && filemtime($image) < filemtime($dest) ) continue;
-
-		$images[]= $img;
-	} 
+        
+		$images[]= DIRECTORY_SEPARATOR.$img;
+	}
 
 	die(json_encode([
 		'status'=> 'complete', 
@@ -203,5 +202,4 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	return str_replace($cwebp_path, '', $cwebp);
 }
-
 ?>
