@@ -34,21 +34,8 @@ if(!$modx->user->hasSessionContext('mgr')) { // Check authorization
 // Json API
 
 if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directory
-	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
+	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp');
 	
-	$pattern= '';
-	for($i=1; $i <= 30; $i++){ // Create pattern for search files in subdirectories
-		$pattern.= ','.str_repeat('*'.DIRECTORY_SEPARATOR, $i);
-	}
-
-	foreach(glob(BASE_PATH.DIRECTORY_SEPARATOR.'webp'.'{'.$pattern.'}{*.webp}', GLOB_BRACE) as $image){ // Search files recursive
-		$dest= BASE_PATH.str_replace([BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $image);
-		if( !file_exists($dest) ) {
-			unlink($image);
-		}
-	} 
-	
- 
 	$idir = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( BASE_PATH.DIRECTORY_SEPARATOR.'webp', FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::CHILD_FIRST );
  
 	foreach( $idir as $v ){
@@ -56,7 +43,6 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 			if( count(glob($idir->key().DIRECTORY_SEPARATOR.'*')) == 0 ) rmdir( $idir->key() );
 		}
 	} 	
-	
 	
 	clearCache();
 	
@@ -71,21 +57,10 @@ die_clean:
 
 
 if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to converting
-	$it  = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(BASE_PATH));
-	$ite = new RegexIterator($it, "#{.jpg$|.png$|.jpeg$}#i", RegexIterator::MATCH);
-   
 	$images= [];
-	
-	foreach ($ite as $file) {
-		$img= $ite->getSubPathname(); // Create pattern for search files in subdirectories
-		if( strpos($img, 'manager'.DIRECTORY_SEPARATOR) !== false || strpos($img, 'webp'.DIRECTORY_SEPARATOR) !== false) continue;
-        
-		$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR.$img.'.webp';
-		$image= BASE_PATH.DIRECTORY_SEPARATOR.$img;
-		if( file_exists($dest) && filemtime($image) < filemtime($dest) ) continue;
-        
-		$images[]= DIRECTORY_SEPARATOR.$img;
-	}
+	recursive_search_img(BASE_PATH, $images);
+
+
 
 	die(json_encode([
 		'status'=> 'complete', 
@@ -202,4 +177,62 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	return str_replace($cwebp_path, '', $cwebp);
 }
+
+
+
+function recursive_search_img($dir, &$images){ // Search jpeg and png files recursive
+	$odir = opendir($dir);
+ 
+	while(($file = readdir($odir)) !== FALSE){
+		if(
+			$file == '.' || 
+			$file == '..' || 
+			stripos($dir.DIRECTORY_SEPARATOR.$file, BASE_PATH.DIRECTORY_SEPARATOR.'manager') !== false || 
+			stripos($dir.DIRECTORY_SEPARATOR.$file, BASE_PATH.DIRECTORY_SEPARATOR.'webp') !== false
+		){
+			continue;
+		}
+		
+		if(is_dir($dir.DIRECTORY_SEPARATOR.$file)){
+			recursive_search_img($dir.DIRECTORY_SEPARATOR.$file, $images);
+		} else {
+			if( stripos($file, '.jpg') !== false || stripos($file, '.jpeg') !== false || stripos($file, '.png') !== false ){
+				$img= str_replace(BASE_PATH, '', $dir.DIRECTORY_SEPARATOR.$file);
+				$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR.$img.'.webp';
+				
+				if( file_exists($dest) && filemtime($dir.DIRECTORY_SEPARATOR.$file) < filemtime($dest) ) continue;
+				$images[]= $img;
+			} else {
+				continue;
+			}
+		}
+	}
+	closedir($odir);
+}
+
+
+function recursive_search_webp($dir){ // Search webp files recursive
+	$odir = opendir($dir);
+ 
+	while(($file = readdir($odir)) !== FALSE){
+		if(	$file == '.' || $file == '..' )	continue;
+		
+		if(is_dir($dir.DIRECTORY_SEPARATOR.$file)){
+			recursive_search_webp($dir.DIRECTORY_SEPARATOR.$file);
+		} else {
+			if( strripos($file, '.webp', -5) !== false ){
+				$dest= BASE_PATH.str_replace([BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $dir.DIRECTORY_SEPARATOR.$file);
+				
+				if( !file_exists($dest) ) {
+					unlink($dir.DIRECTORY_SEPARATOR.$file);
+				}
+			} else {
+				continue;
+			}
+		}
+	}
+	closedir($odir);
+}
+
+
 ?>
