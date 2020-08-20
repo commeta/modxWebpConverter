@@ -56,11 +56,10 @@ if(!$modx->user->hasSessionContext('mgr')) { // Check authorization
 // Json API
 
 if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directory
-	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
-	
 	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page'); // Clear webp modx cache
 	$modx->cacheManager->clean($options);
 	
+	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
 	
 	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove deleted copy webp files recursive
 	recursive_remove_empty_dirs(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove empty dirs
