@@ -14,3 +14,14 @@ The binaries are taken from https://github.com/rosell-dk/webp-convert https://de
 i.e. /assets/logo.png - > /webp/assets/logo.png.webp
 
 3. Creating a plugin in the admin panel: webp_replacer.php and hang it on the OnWebPagePrerender event. After that, all images in the HTML code will be replaced with webp, if the browser supports them.
+
+### The results of testing
+
+Tested on windows and linux. 
+Took a selection of jpg & png, 24382 files, 3385MB.
+
+Everything worked fine, memory consumption is at a peak: on win 6 580 936, on lin 3 816 368.
+Scanning subdirectories took: 191ms SSD, 3123ms HDD.
+The resulting volume of compressed files: 1005MB, no loss in quality was noticed.
+
+I opened 12 tabs in the browser at the same time, as a result, the encoding went to 12 threads, I have a Ryzen 5 2600X Six-Core processing of all files took about 45 minutes.
