@@ -1,5 +1,27 @@
 <?php
-// Server api for converting files
+/*
+ * Server api for converting files
+ * 
+ * Copyright 2020 commeta <dcs-spb@ya.ru>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ * 
+ * 
+ */
+
 
 ////////////////////////////////////////////////////////////////////////
 // Init
@@ -36,19 +58,12 @@ if(!$modx->user->hasSessionContext('mgr')) { // Check authorization
 if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directory
 	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
 	
-	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp');
+	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page'); // Clear webp modx cache
+	$modx->cacheManager->clean($options);
 	
-	$idir = new RecursiveIteratorIterator( // Delete empty dirs
-		new RecursiveDirectoryIterator(BASE_PATH.DIRECTORY_SEPARATOR.'webp', FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST
-	);
- 
-	foreach( $idir as $v ){
-		if( $v->isDir() and $v->isWritable() ){
-			if( count(glob($idir->key().DIRECTORY_SEPARATOR.'*')) == 0 ) rmdir( $idir->key() );
-		}
-	} 	
 	
-	clearCache();
+	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove deleted copy webp files recursive
+	recursive_remove_empty_dirs(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove empty dirs
 	
 die_clean:
 	
@@ -132,13 +147,6 @@ die_convert:
 ////////////////////////////////////////////////////////////////////////
 // Functions
 
-function clearCache() { // Clear webp cache
-	global $modx;
-
-	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page');
-	$modx->cacheManager->clean($options);
-}
-
 
 function getBinary(){ // Detect os and select converter command line tool
 	// https://github.com/rosell-dk/webp-convert
@@ -216,8 +224,6 @@ function recursive_search_img($dir, &$images){ // Search jpeg and png files recu
 				
 				if( file_exists($dest) && filemtime($dir.DIRECTORY_SEPARATOR.$file) < filemtime($dest) ) continue;
 				$images[]= $img;
-			} else {
-				continue;
 			}
 		}
 	}
@@ -245,11 +251,37 @@ function recursive_search_webp($dir){ // Search webp files recursive
 				if( !file_exists($dest) ) {
 					unlink($dir.DIRECTORY_SEPARATOR.$file);
 				}
-			} else {
-				continue;
 			}
 		}
 	}
 	closedir($odir);
 }
+
+
+
+function recursive_remove_empty_dirs($dir){ // Remove empty dirs
+	$odir = opendir($dir);
+
+	$count_files= 0;
+	
+	while(($file = readdir($odir)) !== FALSE){
+		if($file == '.' || $file == '..') continue;
+		
+		$count_files++;
+		
+		if(is_dir($dir.DIRECTORY_SEPARATOR.$file)){
+			$count_files += recursive_remove_empty_dirs($dir.DIRECTORY_SEPARATOR.$file);
+		}
+	}
+	
+	closedir($odir);
+	
+	if($count_files == 0) {
+		rmdir( $dir );
+		return -1;
+	}
+	
+	return $count_files;
+}
+
 ?>
