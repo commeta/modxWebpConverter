@@ -30,6 +30,10 @@
 $BASE_PATH= dirname(dirname(__DIR__));
 define('BASE_PATH', $BASE_PATH);
 
+$max_time= MAX_EXECUTION_TIME;
+$max_time--;
+set_time_limit($max_time);
+
 header('Content-type: application/json');
 if(!isset($_POST['json'])) _die(json_encode([]));
 $json= json_decode($_POST['json'], true);
@@ -59,7 +63,9 @@ $time_limit_exception->enable();
 
 if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directory
 	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
-		
+
+	ignore_user_abort(true);
+	
 	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove deleted copy webp files recursive
 	
 	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page'); // Clear webp modx cache
@@ -113,7 +119,9 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		if( file_exists($dest) ){
 			if(filemtime($dest) > filemtime($source)) goto die_convert;
 		}
-	
+		
+		ignore_user_abort(true);
+		
 		if($ext == 'jpg' || $ext == 'jpeg'){
 			exec(
 				$cwebp.' -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory "'.$source.'" -o "'.$dest.'"',
@@ -319,17 +327,20 @@ class time_limit_exception { // Exit if time exceed time_limit
 	public function onShutdown() { 
 		if ($this->enabled) { //Maximum execution time of $time_limit$ second exceeded
 			global $json;
-			http_response_code(200);
 			
 			if($json['mode'] == 'clean'){
+				http_response_code(200);
+				
 				_die(json_encode([
 					'status'=> 'complete', 
-					'mode'=> 'clean'
+					'mode'=> 'clean',
+					'execution_time' => 'exceeded'
 				]));
 			}
 			
 			if($json['mode'] == 'get'){
 				global $images, $cwebp;
+				http_response_code(200);
 				
 				_die(json_encode([
 					'status'=> 'complete', 
@@ -343,13 +354,14 @@ class time_limit_exception { // Exit if time exceed time_limit
 			
 			if($json['mode'] == 'convert'){
 				global $dest;
-				
+				http_response_code(200);
 				unlink($dest);
 				
 				_die(json_encode([
 					'status'=> 'complete', 
 					'mode'=> 'convert',
-					'return_var'=> 255
+					'return_var'=> 255,
+					'execution_time' => 'exceeded'
 				]));
 			}
 		}   
