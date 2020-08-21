@@ -17,11 +17,10 @@ i.e. /assets/logo.png - > /webp/assets/logo.png.webp
 
 ### The results of testing
 
-Tested on 
+Tested on MODX Revolution 2.7.3-pl!
 * Windows 7 64bit XAMPP PHP 7.4.9, 
 * linux Ubuntu 20.04 64bit LAMP PHP 7.4.3, 
-* linux CentOS 7 LANMP PHP 5.4.45,
-* MODX Revolution 2.7.3-pl!
+* linux CentOS 7 LANMP PHP 5.4.45
 
 Took a selection of jpg & png, 24382 files, 3385MB.
 
