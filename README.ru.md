@@ -17,11 +17,10 @@ MODX Revolution плагин, который осуществляет конве
 
 ### Рузультаты тестирования
 
-Протестировал на 
+Протестировал на MODX Revolution 2.7.3-pl!
 * Windows 7 64bit XAMPP PHP 7.4.9, 
 * linux Ubuntu 20.04 64bit LAMP PHP 7.4.3, 
-* linux CentOS 7 LANMP PHP 5.4.45,
-* MODX Revolution 2.7.3-pl!
+* linux CentOS 7 LANMP PHP 5.4.45
 
 Взял солянку jpg & png, 24382 файлов, 3385MB.
 
