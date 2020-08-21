@@ -192,7 +192,7 @@ function getBinary(){ // Detect os and select converter command line tool
 			}
 		}
 	} else {
-		if( file_exists($cwebp_path.$b) ){
+		if( file_exists($cwebp_path.$bin) ){
 			if( PHP_OS != 'WINNT' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
 			
 			exec($cwebp_path.$bin, $output, $return_var);
