@@ -30,10 +30,8 @@
 $BASE_PATH= dirname(dirname(__DIR__));
 define('BASE_PATH', $BASE_PATH);
 
-set_time_limit(30);
-
 header('Content-type: application/json');
-if(!isset($_POST['json'])) die(json_encode([]));
+if(!isset($_POST['json'])) _die(json_encode([]));
 $json= json_decode($_POST['json'], true);
 
 
@@ -42,15 +40,18 @@ require_once(MODX_CORE_PATH.'model'.DIRECTORY_SEPARATOR.'modx'.DIRECTORY_SEPARAT
 
 $modx= new modX();
 if((!$modx) || (!$modx instanceof modX)) {
-    die(json_encode(['status'=> 'Could not create MODX class']));
+    _die(json_encode(['status'=> 'Could not create MODX class']));
 }
 
 $modx->initialize('mgr');
 //$modx->getService('error', 'error.modError', '', '');
 
 if(!$modx->user->hasSessionContext('mgr')) { // Check authorization
-    die(json_encode(['status'=> 'Unauthorized']));
+    _die(json_encode(['status'=> 'Unauthorized']));
 }
+
+$TimeoutCatcher= new TimeoutCatcher;
+$TimeoutCatcher->enable();
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -58,9 +59,6 @@ if(!$modx->user->hasSessionContext('mgr')) { // Check authorization
 
 if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directory
 	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
-	
-	ignore_user_abort(true);
-	set_time_limit(120);
 	
 	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove deleted copy webp files recursive
 	
@@ -71,7 +69,7 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 
 die_clean:
 	
-	die(json_encode([
+	_die(json_encode([
 		'status'=> 'complete', 
 		'mode'=> 'clean'
 	]));
@@ -81,14 +79,16 @@ die_clean:
 
 if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to converting
 	$images= [];
+	$cwebp= getBinary();
+	
 	recursive_search_img(BASE_PATH, $images);
 
-	die(json_encode([
+	_die(json_encode([
 		'status'=> 'complete', 
 		'mode'=> 'get', 
 		'images'=> $images,
 		'count'=> count($images),
-		'cwebp'=> getBinary()
+		'cwebp'=> $cwebp
 	]));
 }
 
@@ -98,7 +98,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 	if( isset($json['cwebp']) && file_exists(__DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp']) ){
 		$cwebp= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp'];
 	} else {
-		die(json_encode(['status'=> 'Wrong Bin file!']));
+		_die(json_encode(['status'=> 'Wrong Bin file!']));
 	}
 		
 	$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.$json['file'].'.webp';
@@ -113,23 +113,18 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		if( file_exists($dest) ){
 			if(filemtime($dest) > filemtime($source)) goto die_convert;
 		}
-		
-		ignore_user_abort(true);
-		set_time_limit(120);
 	
 		if($ext == 'jpg' || $ext == 'jpeg'){
 			exec(
 				$cwebp.' -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory "'.$source.'" -o "'.$dest.'"',
-				$output,
-				$return_var
+				$output, $return_var
 			);
 		}
 		
 		if($ext == 'png'){
 			exec(
 				$cwebp.' -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory "'.$source.'" -o "'.$dest.'"',
-				$output,
-				$return_var
+				$output, $return_var
 			);
 		}
 	} else {
@@ -139,7 +134,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 
 die_convert:
 
-	die(json_encode([
+	_die(json_encode([
 		'status'=> 'complete', 
 		'mode'=> 'convert',
 		'return_var'=> $return_var
@@ -152,6 +147,10 @@ die_convert:
 // Functions
 
 function getBinary(){ // Detect os and select converter command line tool
+	$disablefunc = array(); // Check disabled exec function
+	$disablefunc = explode(",", str_replace(" ", "", @ini_get("disable_functions")));
+	if(!is_callable("exec") || in_array("exec", $disablefunc)) _die(json_encode(['status'=> 'Exec function disabled!']));	
+	
 	// https://github.com/rosell-dk/webp-convert
 	// https://developers.google.com/speed/webp/docs/precompiled
 	$cwebp_path= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR;
@@ -175,10 +174,9 @@ function getBinary(){ // Detect os and select converter command line tool
 		]
 	];
 	
-	if( !isset($suppliedBinaries[PHP_OS]) ) die(json_encode(['status'=> 'Bin file not found!']));
+	if( !isset($suppliedBinaries[PHP_OS]) ) _die(json_encode(['status'=> 'Bin file not found!']));
 	$bin= $suppliedBinaries[PHP_OS]; // Select OS
 
-	
 	if( is_array($bin) ){ // Check binary
 		foreach($bin as $b){
 			if( file_exists($cwebp_path.$b) ){
@@ -201,7 +199,7 @@ function getBinary(){ // Detect os and select converter command line tool
 		
 	}
 	
-	if( !isset($cwebp) ) die(json_encode(['status'=> 'Bin file not work!']));
+	if( !isset($cwebp) ) _die(json_encode(['status'=> 'Bin file not work!']));
 	
 	return $cwebp;
 }
@@ -290,6 +288,72 @@ function recursive_remove_empty_dirs($dir){ // Remove empty dirs
 	}
 	
 	return $count_files;
+}
+
+
+
+function _die($return){
+	global $TimeoutCatcher;
+	
+	$TimeoutCatcher->disable();
+	die($return);
+}
+
+
+
+class TimeoutCatcher { // Exit if time exceed time_limit
+	protected $enabled= false;
+
+	public function __construct() {
+		register_shutdown_function( array($this, 'onShutdown') );
+	}
+    
+	public function enable() {
+		$this->enabled= true;
+	}   
+    
+	public function disable() {
+		$this->enabled= false;
+	}   
+    
+	public function onShutdown() { 
+		if ($this->enabled) { //Maximum execution time of $time_limit$ second exceeded
+			global $json;
+			http_response_code(200);
+			
+			if($json['mode'] == 'clean'){
+				_die(json_encode([
+					'status'=> 'complete', 
+					'mode'=> 'clean'
+				]));
+			}
+			
+			if($json['mode'] == 'get'){
+				global $images, $cwebp;
+				
+				_die(json_encode([
+					'status'=> 'complete', 
+					'mode'=> 'get', 
+					'images'=> $images,
+					'count'=> count($images),
+					'cwebp'=> $cwebp,
+					'execution_time' => 'exceeded'
+				]));
+			}
+			
+			if($json['mode'] == 'convert'){
+				global $dest;
+				
+				unlink($dest);
+				
+				_die(json_encode([
+					'status'=> 'complete', 
+					'mode'=> 'convert',
+					'return_var'=> 255
+				]));
+			}
+		}   
+	}   
 }
 
 ?>
