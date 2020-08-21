@@ -181,22 +181,29 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	if( is_array($bin) ){ // Check binary
 		foreach($bin as $b){
-			if( !is_executable($b) ) chmod($cwebp_path.$b, 0755);
-			exec( $cwebp_path.$b, $output, $return_var);
-			if( $return_var == 0){
-				$cwebp= $cwebp_path.$b;
-				break;
+			if( file_exists($cwebp_path.$b) ){
+				if( !is_executable($b) ) chmod($cwebp_path.$b, 0755);
+				
+				exec( $cwebp_path.$b, $output, $return_var);
+				if( $return_var == 0){
+					$cwebp= $b;
+					break;
+				}
 			}
 		}
 	} else {
-		if( !is_executable($bin) ) chmod($cwebp_path.$bin, 0755);
-		exec($cwebp_path.$bin, $output, $return_var);
-		if( $return_var == 0) $cwebp= $cwebp_path.$bin;
+		if( file_exists($cwebp_path.$b) ){
+			if( !is_executable($bin) ) chmod($cwebp_path.$bin, 0755);
+			
+			exec($cwebp_path.$bin, $output, $return_var);
+			if( $return_var == 0) $cwebp= $bin;
+		}
+		
 	}
 	
 	if( !isset($cwebp) ) die(json_encode(['status'=> 'Bin file not work!']));
 	
-	return str_replace($cwebp_path, '', $cwebp);
+	return $cwebp;
 }
 
 
