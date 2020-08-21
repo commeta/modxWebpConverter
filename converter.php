@@ -342,20 +342,23 @@ class time_limit_exception { // Exit if time exceed time_limit
 				global $images, $cwebp;
 				http_response_code(200);
 				
-				_die(json_encode([
-					'status'=> 'complete', 
-					'mode'=> 'get', 
-					'images'=> $images,
-					'count'=> count($images),
-					'cwebp'=> $cwebp,
-					'execution_time' => 'exceeded'
-				]));
+				if(isset($images) && isset($cwebp)){
+					_die(json_encode([
+						'status'=> 'complete', 
+						'mode'=> 'get', 
+						'images'=> $images,
+						'count'=> count($images),
+						'cwebp'=> $cwebp,
+						'execution_time' => 'exceeded'
+					]));
+				}
 			}
 			
 			if($json['mode'] == 'convert'){
 				global $dest;
 				http_response_code(200);
-				unlink($dest);
+				
+				if(isset($dest) && file_exists($dest) ) unlink($dest);
 				
 				_die(json_encode([
 					'status'=> 'complete', 
