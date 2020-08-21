@@ -340,7 +340,7 @@ class time_limit_exception { // Exit if time exceed time_limit
 				]));
 			}
 			
-			if($json['mode'] == 'get'){
+			if($json['mode'] == 'get'){ 
 				global $images, $cwebp;
 				http_response_code(200);
 				
@@ -354,20 +354,6 @@ class time_limit_exception { // Exit if time exceed time_limit
 						'execution_time' => 'exceeded'
 					]));
 				}
-			}
-			
-			if($json['mode'] == 'convert'){
-				global $dest;
-				http_response_code(200);
-				
-				//if(isset($dest) && file_exists($dest) ) unlink($dest);
-				
-				_die(json_encode([
-					'status'=> 'complete', 
-					'mode'=> 'convert',
-					'return_var'=> 255,
-					'execution_time' => 'exceeded'
-				]));
 			}
 		}   
 	}   
