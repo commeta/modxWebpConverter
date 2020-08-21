@@ -30,6 +30,7 @@
 $BASE_PATH= dirname(dirname(__DIR__));
 define('BASE_PATH', $BASE_PATH);
 
+// Decrement max execution time, keep correct server or proxy connection timeout - equal php execution time!
 $max_time= ini_get('max_execution_time');
 $max_time--;
 set_time_limit($max_time);
@@ -359,7 +360,7 @@ class time_limit_exception { // Exit if time exceed time_limit
 				global $dest;
 				http_response_code(200);
 				
-				if(isset($dest) && file_exists($dest) ) unlink($dest);
+				//if(isset($dest) && file_exists($dest) ) unlink($dest);
 				
 				_die(json_encode([
 					'status'=> 'complete', 
