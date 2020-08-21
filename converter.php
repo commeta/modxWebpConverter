@@ -30,9 +30,10 @@
 $BASE_PATH= dirname(dirname(__DIR__));
 define('BASE_PATH', $BASE_PATH);
 
-$max_time= MAX_EXECUTION_TIME;
+$max_time= ini_get('max_execution_time');
 $max_time--;
 set_time_limit($max_time);
+ini_set('MAX_EXECUTION_TIME', $max_time);
 
 header('Content-type: application/json');
 if(!isset($_POST['json'])) _die(json_encode([]));
