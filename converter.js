@@ -3,7 +3,15 @@
 Ext.onReady(function() {
 	function manual_start(){
 		document.getElementById('converter').innerHTML= "Поиск изображений";
-		fetch_converter('get');
+		
+		
+		let converter_count= localStorage.getItem('converter_count');
+		if(converter_count && parseInt(converter_count) > 0) {
+			files_iterator();
+		} else {
+			fetch_converter('get');
+		}
+		
 	}
 	
 	function files_iterator(){// Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
