@@ -1,5 +1,5 @@
 # modxWebpConverter
-
+![modxWebpConverter](https://raw.githubusercontent.com/commeta/modxWebpConverter/master/screenShot.png "modxWebpConverter")
 MODX Revolution is a plugin that converts image files to webp format.
 
 Install & use
