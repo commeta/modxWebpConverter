@@ -66,6 +66,8 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
 
 	ignore_user_abort(true);
+	set_time_limit(300);
+	ini_set('MAX_EXECUTION_TIME', 300);
 	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove deleted copy webp files recursive
 	
 	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page'); // Clear webp modx cache
