@@ -90,7 +90,7 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 	$cwebp= getBinary();
 	
 	$time_limit_exception->enable();
-	recursive_search_img(BASE_PATH, $images);
+	recursive_search_img(BASE_PATH);
 
 	_die(json_encode([
 		'status'=> 'complete', 
@@ -212,7 +212,7 @@ function getBinary(){ // Detect os and select converter command line tool
 
 
 
-function recursive_search_img($dir, &$images){ // Search jpeg and png files recursive
+function recursive_search_img($dir){ // Search jpeg and png files recursive
 	$odir= opendir($dir);
 	
 	while(($file= readdir($odir)) !== FALSE){
@@ -229,7 +229,7 @@ function recursive_search_img($dir, &$images){ // Search jpeg and png files recu
 		
 		
 		if(is_dir($full_path)){
-			recursive_search_img($full_path, $images);
+			recursive_search_img($full_path);
 		} else {
 			if(
 				strripos($file, '.jpg', -4) !== false ||
@@ -240,6 +240,8 @@ function recursive_search_img($dir, &$images){ // Search jpeg and png files recu
 				$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR.$img.'.webp';
 				
 				if( file_exists($dest) && filemtime($full_path) < filemtime($dest) ) continue;
+				
+				global $images;
 				$images[]= $img;
 			}
 		}
