@@ -57,7 +57,6 @@ if(!$modx->user->hasSessionContext('mgr')) { // Check authorization
 }
 
 $time_limit_exception= new time_limit_exception;
-$time_limit_exception->enable();
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -89,6 +88,8 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 	$images= [];
 	$cwebp= getBinary();
 	
+	$time_limit_exception->enable();
+
 	recursive_search_img(BASE_PATH, $images);
 
 	_die(json_encode([
@@ -323,17 +324,7 @@ class time_limit_exception { // Exit if time exceed time_limit
 	public function onShutdown() { 
 		if ($this->enabled) { //Maximum execution time of $time_limit$ second exceeded
 			global $json;
-			
-			if($json['mode'] == 'clean'){
-				http_response_code(200);
-				
-				_die(json_encode([
-					'status'=> 'complete', 
-					'mode'=> 'clean',
-					'execution_time' => 'exceeded'
-				]));
-			}
-			
+						
 			if($json['mode'] == 'get'){ //Too many files, use autoconverter.py or image2webp.sh from https://github.com/commeta/autoconverter
 				global $images, $cwebp;
 				http_response_code(200);
