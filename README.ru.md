@@ -1,5 +1,7 @@
 ## modxWebpConverter
 
+![modxWebpConverter](https://raw.githubusercontent.com/commeta/modxWebpConverter/master/screenShot.png "modxWebpConverter")
+
 MODX Revolution плагин, который осуществляет конвертацию графических файлов в формат webp.
 
 Смысл в чем:
