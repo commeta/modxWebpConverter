@@ -125,17 +125,13 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		ignore_user_abort(true);
 		
 		if($ext == 'jpg' || $ext == 'jpeg'){
-			exec(
-				$cwebp.' -metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory "'.$source.'" -o "'.$dest.'"',
-				$output, $return_var
-			);
+			$param= "-metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory";
+			exec($cwebp.' '.$param.' "'.$source.'" -o "'.$dest.'"',	$output, $return_var);
 		}
 		
 		if($ext == 'png'){
-			exec(
-				$cwebp.' -metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory "'.$source.'" -o "'.$dest.'"',
-				$output, $return_var
-			);
+			$param= "-metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory";
+			exec($cwebp.' '.$param.' "'.$source.'" -o "'.$dest.'"', $output, $return_var);
 		}
 	} else {
 		$return_var= 127;
@@ -206,7 +202,6 @@ function getBinary(){ // Detect os and select converter command line tool
 			exec($cwebp_path.$bin, $output, $return_var);
 			if( $return_var == 0) $cwebp= $bin;
 		}
-		
 	}
 	
 	if( !isset($cwebp) ) _die(json_encode(['status'=> 'Bin file not work!']));
@@ -261,8 +256,7 @@ function recursive_search_webp($dir){ // Search webp files recursive
 		} else {
 			if( strripos($file, '.webp', -5) !== false ){
 				$dest= BASE_PATH.str_replace(
-					[BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', 
-					$dir.DIRECTORY_SEPARATOR.$file
+					[BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $dir.DIRECTORY_SEPARATOR.$file
 				);
 				
 				if( !file_exists($dest) ) {
@@ -340,7 +334,7 @@ class time_limit_exception { // Exit if time exceed time_limit
 				]));
 			}
 			
-			if($json['mode'] == 'get'){ 
+			if($json['mode'] == 'get'){ //Too many files, use autoconverter.py or image2webp.sh from https://github.com/commeta/autoconverter
 				global $images, $cwebp;
 				http_response_code(200);
 				
