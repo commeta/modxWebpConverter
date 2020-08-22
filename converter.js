@@ -19,6 +19,8 @@ Ext.onReady(function() {
 			let key= localStorage.key(i);
 			
 			if( key.includes('convert_img') ){
+				localStorage.setItem(window.converter_token, "active");
+				
 				let file= localStorage.getItem(key);
 				localStorage.removeItem(key);
 				fetch_converter('convert', file);
@@ -33,6 +35,7 @@ Ext.onReady(function() {
 		}
 		
 		document.getElementById('converter').innerHTML= "Конвертация закончена";
+		localStorage.setItem(window.converter_token, "passive");
 		
 		fetch_converter('clean'); // Clean deleted copy of files into /webp/ directory
 		
@@ -87,7 +90,7 @@ Ext.onReady(function() {
 					}
 					
 					data.images.forEach(function(file, index, created) {
-						localStorage.setItem('convert_img'+index, file);
+						localStorage.setItem('convert_img_'+index, file);
 					});
 						
 					files_iterator();
@@ -104,19 +107,54 @@ Ext.onReady(function() {
 	}
 	
 	
+	let rand= function() {
+		return Math.random().toString(12).substr(2); // remove `0.`
+	};
+
+	let token= function() {
+		return "converter_token_" + rand() + rand(); // to make it longer
+	};
+
+	window.addEventListener("unload", function() { // Delete token on unload
+		localStorage.removeItem(window.converter_token);
+	});
+
+	
 	// Init
 	let modxUserMenu= document.getElementById('modx-user-menu');
 	
-	let a = document.createElement("a");
-	const textUserMenu = document.createTextNode( "WEBP Конвертер" );
+	let a= document.createElement("a");
+	const textUserMenu= document.createTextNode( "WEBP Конвертер" );
 	a.setAttribute("id", "converter");
 	a.setAttribute("title", "Очередь изображений для webp конвертера");
 	a.onclick= manual_start;
 	a.appendChild( textUserMenu );
 	
-	let webpConverterLI = document.createElement("li");
+	let webpConverterLI= document.createElement("li");
 	webpConverterLI.appendChild(a);
 	modxUserMenu.insertBefore(webpConverterLI, modxUserMenu.firstChild);
+
+	
+	let count_parallel_tabs= 0;
+	let concurent_tasks= 3;
+	
+	// Detect concurent tasks
+	if(typeof(localStorage.length) != "undefined" && localStorage.length > 0) {
+		for(let i= 0, length= localStorage.length; i < length; i++) {
+			let key= localStorage.key(i);
+			
+			if( key.includes('converter_token') ){
+				let converter_token= localStorage.getItem(key);
+				if(converter_token == "active"){
+					count_parallel_tabs++;
+				}
+			}
+		}
+	}
+	
+	window.converter_token= token(); // generate token
+	localStorage.setItem(window.converter_token, "passive");
+	
 	
 	
 	// Check reload
@@ -125,7 +163,10 @@ Ext.onReady(function() {
 	
 	if(converter && converter_count) {
 		converter_count= parseInt(converter_count);
-		if(converter_count > 0) files_iterator();
-		//if( converter < (Date.now() - 300) && converter_count == 0 ) fetch_converter('get');
+		
+		// Autostart max concurent task
+		if(converter_count > 0 && count_parallel_tabs < concurent_tasks) {
+			files_iterator();
+		}
 	}
 });
