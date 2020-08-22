@@ -66,7 +66,6 @@ if($json['mode'] == 'clean'){ // Clean deleted copy of files into /webp/ directo
 	if( !is_dir(BASE_PATH.DIRECTORY_SEPARATOR.'webp') ) goto die_clean;
 
 	ignore_user_abort(true);
-	
 	recursive_search_webp(BASE_PATH.DIRECTORY_SEPARATOR.'webp'); // Remove deleted copy webp files recursive
 	
 	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page'); // Clear webp modx cache
@@ -89,7 +88,6 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 	$cwebp= getBinary();
 	
 	$time_limit_exception->enable();
-
 	recursive_search_img(BASE_PATH, $images);
 
 	_die(json_encode([
