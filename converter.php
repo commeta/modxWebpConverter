@@ -323,7 +323,8 @@ class time_limit_exception { // Exit if time exceed time_limit
 		if ($this->enabled) { //Maximum execution time of $time_limit$ second exceeded
 			global $json;
 						
-			if($json['mode'] == 'get'){ //Too many files, use autoconverter.py or image2webp.sh from https://github.com/commeta/autoconverter
+			if($json['mode'] == 'get'){ //Too many files, use SSD instead HDD, or try again several times hoping for the system cache of the file system 
+				// Another solution, use autoconverter.py or image2webp.sh from https://github.com/commeta/autoconverter
 				global $images, $cwebp;
 				http_response_code(200);
 				
