@@ -1,7 +1,7 @@
 "use strict";
 
 Ext.onReady(function() {
-	function manual_start(){
+	function manual_start(){ // Click in menu link
 		document.getElementById('converter').innerHTML= "Поиск изображений";
 		
 		let converter_count= localStorage.getItem('converter_count');
@@ -13,7 +13,9 @@ Ext.onReady(function() {
 	}
 	
 	function files_iterator(){// Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
-		for (var i = 0, length = localStorage.length; i < length; i++) {
+		if(typeof(localStorage.length) == "undefined") return;
+		
+		for(let i= 0, length= localStorage.length; i < length; i++) {
 			let key= localStorage.key(i);
 			
 			if( key.includes('convert_img') ){
@@ -126,9 +128,6 @@ Ext.onReady(function() {
 		converter_count= parseInt(converter_count);
 		
 		if(converter_count > 0) files_iterator();
-		
 		//if( converter < (Date.now() - 300) && converter_count == 0 ) fetch_converter('get');
-	} else {
-		fetch_converter('get');
 	}
 });
