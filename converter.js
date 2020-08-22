@@ -27,6 +27,9 @@ Ext.onReady(function() {
 		document.getElementById('converter').innerHTML= "Конвертация закончена";
 		
 		fetch_converter('clean'); // Clean deleted copy of files into /webp/ directory
+		
+		let converter_error= localStorage.getItem('converter_error');
+		if( converter_error ) document.getElementById('converter').innerHTML= converter_error;
 	}
 	
 	function fetch_converter(mode, file= false){
@@ -53,7 +56,11 @@ Ext.onReady(function() {
 					localStorage.setItem('converter', Date.now());
 					localStorage.setItem('converter_count', data.count);
 					localStorage.setItem('converter_cwebp', data.cwebp);
-						
+					
+					if(typeof( data.execution_time ) != "undefined" && data.execution_time == "exceeded"){
+						localStorage.setItem('converter_error', 'Ошибка: слишком много файлов');
+					}
+					
 					data.images.forEach(function(file, index, created) {
 						localStorage.setItem('convert_img'+index, file);
 					});
@@ -76,11 +83,11 @@ Ext.onReady(function() {
 	let modxUserMenu= document.getElementById('modx-user-menu');
 	
 	let a = document.createElement("a");
-	const text = document.createTextNode( "WEBP Конвертер" );
+	const textUserMenu = document.createTextNode( "WEBP Конвертер" );
 	a.setAttribute("id", "converter");
 	a.setAttribute("title", "Очередь изображений для webp конвертера");
 	a.onclick= manual_start;
-	a.appendChild( text );
+	a.appendChild( textUserMenu );
 	
 	let webpConverterLI = document.createElement("li");
 	webpConverterLI.appendChild(a);
