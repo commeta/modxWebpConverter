@@ -154,8 +154,8 @@ die_convert:
 // Functions
 
 function getBinary(){ // Detect os and select converter command line tool
-	$disablefunc = array(); // Check disabled exec function
-	$disablefunc = explode(",", str_replace(" ", "", @ini_get("disable_functions")));
+	$disablefunc= array(); // Check disabled exec function
+	$disablefunc= explode(",", str_replace(" ", "", @ini_get("disable_functions")));
 	if(!is_callable("exec") || in_array("exec", $disablefunc)) _die(json_encode(['status'=> 'Exec function disabled!']));	
 	
 	// https://github.com/rosell-dk/webp-convert
@@ -214,29 +214,32 @@ function getBinary(){ // Detect os and select converter command line tool
 
 function recursive_search_img($dir, &$images){ // Search jpeg and png files recursive
 	$odir= opendir($dir);
- 
-	while(($file = readdir($odir)) !== FALSE){
+	
+	while(($file= readdir($odir)) !== FALSE){
+		$full_path= $dir.DIRECTORY_SEPARATOR.$file;
+		
 		if( // Exclude subdirectories from search
 			$file == '.' || 
 			$file == '..' || 
-			stripos($dir.DIRECTORY_SEPARATOR.$file, BASE_PATH.DIRECTORY_SEPARATOR.'manager') !== false ||
-			stripos($dir.DIRECTORY_SEPARATOR.$file, BASE_PATH.DIRECTORY_SEPARATOR.'webp') !== false
+			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'manager') !== false ||
+			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'webp') !== false
 		){
 			continue;
 		}
 		
-		if(is_dir($dir.DIRECTORY_SEPARATOR.$file)){
-			recursive_search_img($dir.DIRECTORY_SEPARATOR.$file, $images);
+		
+		if(is_dir($full_path)){
+			recursive_search_img($full_path, $images);
 		} else {
 			if(
 				strripos($file, '.jpg', -4) !== false ||
 				strripos($file, '.jpeg', -5) !== false ||
 				strripos($file, '.png', -4) !== false
 			){
-				$img= str_replace(BASE_PATH, '', $dir.DIRECTORY_SEPARATOR.$file);
+				$img= str_replace(BASE_PATH, '', $full_path);
 				$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR.$img.'.webp';
 				
-				if( file_exists($dest) && filemtime($dir.DIRECTORY_SEPARATOR.$file) < filemtime($dest) ) continue;
+				if( file_exists($dest) && filemtime($full_path) < filemtime($dest) ) continue;
 				$images[]= $img;
 			}
 		}
@@ -249,19 +252,20 @@ function recursive_search_img($dir, &$images){ // Search jpeg and png files recu
 function recursive_search_webp($dir){ // Search webp files recursive
 	$odir= opendir($dir);
  
-	while(($file = readdir($odir)) !== FALSE){
+	while(($file= readdir($odir)) !== FALSE){
 		if($file == '.' || $file == '..') continue;
+		$full_path= $dir.DIRECTORY_SEPARATOR.$file;
 		
-		if(is_dir($dir.DIRECTORY_SEPARATOR.$file)){
-			recursive_search_webp($dir.DIRECTORY_SEPARATOR.$file);
+		if(is_dir($full_path)){
+			recursive_search_webp($full_path);
 		} else {
-			if( strripos($file, '.webp', -5) !== false ){
+			if(strripos($file, '.webp', -5) !== false ){
 				$dest= BASE_PATH.str_replace(
-					[BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $dir.DIRECTORY_SEPARATOR.$file
+					[BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $full_path
 				);
 				
 				if( !file_exists($dest) ) {
-					unlink($dir.DIRECTORY_SEPARATOR.$file);
+					unlink($full_path);
 				}
 			}
 		}
@@ -272,7 +276,7 @@ function recursive_search_webp($dir){ // Search webp files recursive
 
 
 function recursive_remove_empty_dirs($dir){ // Remove empty dirs
-	$odir = opendir($dir);
+	$odir= opendir($dir);
 	$count_files= 0;
 	
 	while(($file= readdir($odir)) !== FALSE){
