@@ -10,10 +10,10 @@ Install & use
 * Binaries - Binary utilities cwebp, there is for linux, windows, macos, freebsd, solaris.
 The binaries are taken from https://github.com/rosell-dk/webp-convert https://developers.google.com/speed/webp/docs/precompiled
 
-2. Creating a plugin in the admin panel: webp_converter.php and hang it on the OnManagerPageBeforeRender event. After that, an icon will appear in the upper-right corner. when you click on it, the site directories will be scanned in the background, and a copy of each image in the webp subdirectory will be created. 
+2. Creating a plugin in the admin panel: modx_plugin_webp_converter.php and hang it on the OnManagerPageBeforeRender and OnWebPagePrerender event. After that, an icon will appear in the upper-right corner. when you click on it, the site directories will be scanned in the background, and a copy of each image in the webp subdirectory will be created. 
 i.e. /assets/logo.png - > /webp/assets/logo.png.webp
 
-3. Creating a plugin in the admin panel: webp_replacer.php and hang it on the OnWebPagePrerender event. After that, all images in the HTML code will be replaced with webp, if the browser supports them.
+3. After converting all found images, all images in the site's HTML code will be replaced with webp, if the browser supports them.
 
 ### The results of testing
 
