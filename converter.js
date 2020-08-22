@@ -4,14 +4,12 @@ Ext.onReady(function() {
 	function manual_start(){
 		document.getElementById('converter').innerHTML= "Поиск изображений";
 		
-		
 		let converter_count= localStorage.getItem('converter_count');
 		if(converter_count && parseInt(converter_count) > 0) {
 			files_iterator();
 		} else {
 			fetch_converter('get');
 		}
-		
 	}
 	
 	function files_iterator(){// Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
@@ -40,6 +38,21 @@ Ext.onReady(function() {
 		if( converter_error ) document.getElementById('converter').innerHTML= converter_error;
 	}
 	
+	function error_catcher(){ // Catch error
+		let converter_mode= localStorage.getItem('converter_mode');
+		if(converter_mode) {
+			if(converter_mode == "get"){
+				document.getElementById('converter').innerHTML= "Ошибка, попробуйте позже";
+			}
+			if(converter_mode == "convert"){
+				files_iterator();
+			}
+			if(converter_mode == "clean"){
+				document.getElementById('converter').innerHTML= "Конвертация закончена";
+			}
+		}
+	}
+	
 	function fetch_converter(mode, file= false){
 		let upload = {
 			"mode": mode,
@@ -49,7 +62,9 @@ Ext.onReady(function() {
 
 		let data = new FormData();
 		data.append("json", JSON.stringify(upload));
-
+		
+		localStorage.setItem('converter_mode', mode);
+		
 		fetch("/connectors/converter/converter.php", {
 			method: "POST",
 			body: data
@@ -83,7 +98,7 @@ Ext.onReady(function() {
 				if(typeof( data.status ) != "undefined") document.getElementById('converter').innerHTML= data.status;
 				else document.getElementById('converter').innerHTML= 'converter ошибка!';
 			}
-		}).catch(() => console.log('converter ошибка!'));
+		}).catch(() => error_catcher());
 	}
 	
 	
@@ -107,7 +122,7 @@ Ext.onReady(function() {
 	let converter_count= localStorage.getItem('converter_count');
 	
 	if( converter ) {
-		converter= parseFloat(converter);
+		converter= parseInt(converter);
 		converter_count= parseInt(converter_count);
 		
 		if(converter_count > 0) files_iterator();
