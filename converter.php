@@ -214,10 +214,10 @@ function recursive_search_img($dir, &$images){ // Search jpeg and png files recu
 	$odir= opendir($dir);
  
 	while(($file = readdir($odir)) !== FALSE){
-		if(
+		if( // Exclude subdirectories from search
 			$file == '.' || 
 			$file == '..' || 
-			stripos($dir.DIRECTORY_SEPARATOR.$file, BASE_PATH.DIRECTORY_SEPARATOR.'manager') !== false || 
+			stripos($dir.DIRECTORY_SEPARATOR.$file, BASE_PATH.DIRECTORY_SEPARATOR.'manager') !== false ||
 			stripos($dir.DIRECTORY_SEPARATOR.$file, BASE_PATH.DIRECTORY_SEPARATOR.'webp') !== false
 		){
 			continue;
