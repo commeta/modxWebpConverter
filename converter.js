@@ -98,7 +98,7 @@ Ext.onReady(function() {
 				}
 			} else {
 				if(typeof( data.status ) != "undefined") document.getElementById('converter').innerHTML= data.status;
-				else document.getElementById('converter').innerHTML= 'converter ошибка!';
+				else error_catcher();
 			}
 		}).catch(() => error_catcher());
 	}
