@@ -123,7 +123,7 @@ Ext.onReady(function() {
 	let converter= localStorage.getItem('converter');
 	let converter_count= localStorage.getItem('converter_count');
 	
-	if(converter) {
+	if(converter && converter_count) {
 		converter_count= parseInt(converter_count);
 		if(converter_count > 0) files_iterator();
 		//if( converter < (Date.now() - 300) && converter_count == 0 ) fetch_converter('get');
