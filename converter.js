@@ -137,7 +137,7 @@ Ext.onReady(function() {
 	let concurent_tasks= 3; // Setup this value equal to the number of server processor cores -1
 	
 	// Detect concurent tasks
-	if(typeof(localStorage.length) != "undefined" && localStorage.length > 0) {
+	if(localStorage.length > 0) {
 		for(let i= 0, length= localStorage.length; i < length; i++) {
 			let key= localStorage.key(i);
 			
@@ -171,3 +171,4 @@ Ext.onReady(function() {
 		}
 	}
 });
+
