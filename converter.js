@@ -83,7 +83,7 @@ Ext.onReady(function() {
 		}).then(function(data) {
 			if(typeof( data.status ) != "undefined" && data.status == "complete"){
 				if(data.mode == 'get'){// Get *.jp[e]g and *.png files list, for queue to converting
-					//localStorage.setItem('converter', Date.now());
+					localStorage.setItem('converter', Date.now());
 					localStorage.setItem('converter_count', data.count);
 					localStorage.setItem('converter_cwebp', data.cwebp);
 					
