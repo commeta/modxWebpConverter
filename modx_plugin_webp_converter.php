@@ -19,19 +19,18 @@ if ($modx->event->name == 'OnWebPagePrerender' && strpos( $_SERVER['HTTP_ACCEPT'
         $uniq_imgs= [];
         preg_match_all('/<img[^>]+>/i',$output, $result);
         
-        if (count($result))	{
+        if(count($result)){
         	foreach($result[0] as $img_tag)	{
-			$img_tag= str_replace("'", '"', $img_tag);
+				$img_tag= str_replace("'", '"', $img_tag);
         		preg_match('/(src)=("[^"]*")/i',$img_tag, $img[$img_tag]);						
         		$img_real = str_replace('"','',$img[$img_tag][2]);
         		$img_real = str_replace('./','',$img_real);			
-        
-         	 	if(
+
+				if(
 					strripos($img_real, '.jpg', -4) !== false ||
 					strripos($img_real, '.jpeg', -5) !== false ||
 					strripos($img_real, '.png', -4) !== false
 				) {
-					
          	 	    if( !in_array($img_real, $uniq_imgs) ){
          	 	        $uniq_imgs[]= $img_real;
          	 	        
