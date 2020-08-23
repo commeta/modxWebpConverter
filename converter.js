@@ -166,9 +166,8 @@ Ext.onReady(function() {
 		converter_count= parseInt(converter_count);
 		
 		// Autostart max concurent task
-		if(converter_count > 0 && count_parallel_tabs <= concurent_tasks) {
+		if(converter_count > 0 && count_parallel_tabs < concurent_tasks) {
 			files_iterator();
 		}
 	}
 });
-
