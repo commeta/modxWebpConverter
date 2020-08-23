@@ -21,7 +21,7 @@ if ($modx->event->name == 'OnWebPagePrerender' && strpos( $_SERVER['HTTP_ACCEPT'
         
         if (count($result))	{
         	foreach($result[0] as $img_tag)	{
-				$img_tag= str_replace("'", '"', $img_tag);
+			$img_tag= str_replace("'", '"', $img_tag);
         		preg_match('/(src)=("[^"]*")/i',$img_tag, $img[$img_tag]);						
         		$img_real = str_replace('"','',$img[$img_tag][2]);
         		$img_real = str_replace('./','',$img_real);			
