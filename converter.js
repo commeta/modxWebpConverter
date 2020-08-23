@@ -119,10 +119,6 @@ Ext.onReady(function() {
 		return "converter_token_" + rand() + rand(); // to make it longer
 	};
 
-	window.addEventListener("unload", function() { // Delete token on unload
-		localStorage.removeItem(window.converter_token);
-	});
-
 	
 	// Init
 	let modxUserMenu= document.getElementById('modx-user-menu');
@@ -159,7 +155,10 @@ Ext.onReady(function() {
 	window.converter_token= token(); // generate token
 	localStorage.setItem(window.converter_token, "passive");
 	
-	
+	window.addEventListener("unload", function() { // Delete token on unload
+		localStorage.removeItem(window.converter_token);
+	});
+
 	
 	// Check reload
 	let converter= localStorage.getItem('converter');
@@ -169,7 +168,7 @@ Ext.onReady(function() {
 		converter_count= parseInt(converter_count);
 		
 		// Autostart max concurent task
-		if(converter_count > 0 && count_parallel_tabs < concurent_tasks) {
+		if(converter_count > 0 && count_parallel_tabs <= concurent_tasks) {
 			files_iterator();
 		}
 	}
