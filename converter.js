@@ -12,6 +12,7 @@ Ext.onReady(function() {
 		}
 	}
 	
+	
 	function files_iterator(){// Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
 		if(typeof(localStorage.length) == "undefined") return;
 		
@@ -35,7 +36,7 @@ Ext.onReady(function() {
 		}
 		
 		document.getElementById('converter').innerHTML= "Конвертация закончена";
-		localStorage.setItem(window.converter_token, "passive");
+		localStorage.setItem(window.converter_token, "stopped");
 		
 		
 		if(localStorage.getItem('converter_mode') != "clean"){
@@ -85,7 +86,7 @@ Ext.onReady(function() {
 		}).then(function(data) {
 			if(typeof( data.status ) != "undefined" && data.status == "complete"){
 				if(data.mode == 'get'){// Get *.jp[e]g and *.png files list, for queue to converting
-					localStorage.setItem('converter', Date.now());
+					//localStorage.setItem('converter', Date.now());
 					localStorage.setItem('converter_count', data.count);
 					localStorage.setItem('converter_cwebp', data.cwebp);
 					
@@ -136,7 +137,7 @@ Ext.onReady(function() {
 
 	
 	let count_parallel_tabs= 0;
-	let concurent_tasks= 3;
+	let concurent_tasks= 3; // Setup this value equal to the number of server processor cores -1
 	
 	// Detect concurent tasks
 	if(typeof(localStorage.length) != "undefined" && localStorage.length > 0) {
