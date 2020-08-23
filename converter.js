@@ -14,8 +14,6 @@ Ext.onReady(function() {
 	
 	
 	function files_iterator(){// Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
-		if(typeof(localStorage.length) == "undefined") return;
-		
 		for(let i= 0, length= localStorage.length; i < length; i++) {
 			let key= localStorage.key(i);
 			
@@ -37,11 +35,10 @@ Ext.onReady(function() {
 		
 		document.getElementById('converter').innerHTML= "Конвертация закончена";
 		localStorage.setItem(window.converter_token, "stopped");
-		
+		localStorage.setItem('converter_count', 0);
 		
 		if(localStorage.getItem('converter_mode') != "clean"){
 			fetch_converter('clean'); // Clean deleted copy of files into /webp/ directory
-			localStorage.setItem('converter_count', 0);
 		}
 		
 		let converter_error= localStorage.getItem('converter_error');
