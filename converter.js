@@ -37,7 +37,11 @@ Ext.onReady(function() {
 		document.getElementById('converter').innerHTML= "Конвертация закончена";
 		localStorage.setItem(window.converter_token, "passive");
 		
-		fetch_converter('clean'); // Clean deleted copy of files into /webp/ directory
+		
+		if(localStorage.getItem('converter_mode') != "clean"){
+			fetch_converter('clean'); // Clean deleted copy of files into /webp/ directory
+			localStorage.setItem('converter_count', 0);
+		}
 		
 		let converter_error= localStorage.getItem('converter_error');
 		if( converter_error ) document.getElementById('converter').innerHTML= converter_error;
