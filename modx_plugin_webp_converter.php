@@ -16,6 +16,7 @@
  *   OnSnippetSave
  * 
  * https://github.com/commeta/modxWebpConverter
+ * https://webdevops.ru/blog/webp-converter-plugin-modx.html
  * 
  * Copyright 2020 commeta <dcs-spb@ya.ru>
  * 
