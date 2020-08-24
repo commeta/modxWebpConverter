@@ -6,6 +6,21 @@ if ($modx->event->name == 'OnManagerPageBeforeRender') {
 
 
 
+
+if(
+	$modx->event->name == 'OnSiteRefresh' ||
+	$modx->event->name == 'OnTemplateSave' ||
+	$modx->event->name == 'OnChunkSave' ||
+	$modx->event->name == 'OnPluginSave' ||
+	$modx->event->name == 'OnSnippetSave'
+) {
+	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page'); // Clear webp modx cache
+	$modx->cacheManager->clean($options);
+}
+
+
+
+
 // Modx revo plugin: replace jpg and png images to webp
 if ($modx->event->name == 'OnWebPagePrerender' && stripos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false) {
 	$options= array(xPDO::OPT_CACHE_KEY=>'webp_on_page');
