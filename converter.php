@@ -181,8 +181,8 @@ function getBinary(){ // Detect os and select converter command line tool
 		]
 	];
 	
-	if( !isset($suppliedBinaries[strtolower(PHP_OS])) ) _die(json_encode(['status'=> 'Bin file not found!']));
-	$bin= $suppliedBinaries[strtolower(PHP_OS])]; // Select OS
+	if( !isset($suppliedBinaries[strtolower(PHP_OS)]) ) _die(json_encode(['status'=> 'Bin file not found!']));
+	$bin= $suppliedBinaries[strtolower(PHP_OS)]; // Select OS
 
 	if( is_array($bin) ){ // Check binary
 		foreach($bin as $b){
@@ -198,7 +198,7 @@ function getBinary(){ // Detect os and select converter command line tool
 		}
 	} else {
 		if( file_exists($cwebp_path.$bin) ){
-			if( strtolower(PHP_OS]) != 'WINNT' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
+			if( strtolower(PHP_OS) != 'WINNT' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
 			
 			exec($cwebp_path.$bin, $output, $return_var);
 			if($return_var == 0) $cwebp= $bin;
