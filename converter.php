@@ -183,7 +183,7 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	if( !isset($suppliedBinaries[strtolower(PHP_OS)]) ) _die(json_encode(['status'=> 'Bin file not found!']));
 	$bin= $suppliedBinaries[strtolower(PHP_OS)]; // Select OS
-	$return_var= 'File for: '.PHP_OS.' not found!';
+	$return_var= 'File for: '.PHP_OS.' not found in /connectors/converter/Binaries/';
 	
 	if( is_array($bin) ){ // Check binary
 		foreach($bin as $b){
