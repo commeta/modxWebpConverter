@@ -1,3 +1,4 @@
+/*! converter.js | (c) Copyright 2020 commeta <dcs-spb@ya.ru> GNU 2 License | https://github.com/commeta/modxWebpConverter */
 "use strict";
 
 Ext.onReady(function() {
@@ -67,7 +68,7 @@ Ext.onReady(function() {
 			"cwebp": file ? localStorage.getItem("converter_cwebp") : false
 		};
 
-		let data = new FormData();
+		let data= new FormData();
 		data.append("json", JSON.stringify(upload));
 		
 		localStorage.setItem('converter_mode', mode);
