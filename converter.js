@@ -1,4 +1,4 @@
-/*! converter.js | (c) Copyright 2020 commeta <dcs-spb@ya.ru> GNU 2 License | https://github.com/commeta/modxWebpConverter */
+/*! converter.js | (c) Copyright 2020 commeta <dcs-spb@ya.ru> GNU 2 License | https://github.com/commeta/modxWebpConverter, https://webdevops.ru/blog/webp-converter-plugin-modx.html */
 "use strict";
 
 Ext.onReady(function() {
