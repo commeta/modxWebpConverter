@@ -198,14 +198,15 @@ function getBinary(){ // Detect os and select converter command line tool
 		}
 	} else {
 		if( file_exists($cwebp_path.$bin) ){
-			if( strtolower(PHP_OS) != 'WINNT' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
+			if( strtolower(PHP_OS) != 'winnt' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
 			
 			exec($cwebp_path.$bin, $output, $return_var);
 			if($return_var == 0) $cwebp= $bin;
 		}
 	}
 	
-	if( !isset($cwebp) ) _die(json_encode(['status'=> 'Bin file not work!']));
+	if( !isset($cwebp) ) _die(json_encode(['status'=> 'Bin file not work!'])); 
+	// Download bin file from https://developers.google.com/speed/webp/docs/precompiled, into directory /connectors/converter/Binaries/
 	
 	return $cwebp;
 }
