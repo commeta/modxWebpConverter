@@ -1,4 +1,42 @@
 <?php
+/*
+ * Modx revo plugin:
+ *  Replace img files from jpg or png to webp
+ *  Clear cached img array
+ *  Add button in user menu Modx revo admin panel
+ * 
+ * 
+ * Use events: 
+ *   OnManagerPageBeforeRender
+ *   OnWebPagePrerender
+ *   OnSiteRefresh
+ *   OnTemplateSave
+ *   OnChunkSave
+ *   OnPluginSave
+ *   OnSnippetSave
+ * 
+ * https://github.com/commeta/modxWebpConverter
+ * 
+ * Copyright 2020 commeta <dcs-spb@ya.ru>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ * 
+ * 
+ */
+ 
 // Modx revo plugin: convert jpg and png images to webp in admin panel
 if ($modx->event->name == 'OnManagerPageBeforeRender') {
 	$modx->controller->addJavascript('/connectors/converter/converter.js');
