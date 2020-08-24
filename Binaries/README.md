@@ -2,7 +2,7 @@
 [downloads repository](https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html)
 
 ## Download bin file in /connectors/converter/Binaries/ directory
-and add file name in $suppliedBinaries Array in /connectors/converter/converter.php file, function getBinary(), example:
+and add\replace new file name in $suppliedBinaries Array in /connectors/converter/converter.php file, function getBinary(), example:
 ```PHP
 	$suppliedBinaries = [
 		'winnt' => 'cwebp-110-windows-x64.exe', // Microsoft Windows 64bit
