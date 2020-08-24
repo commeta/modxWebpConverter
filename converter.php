@@ -193,7 +193,6 @@ function getBinary(){ // Detect os and select converter command line tool
 				
 				exec($cwebp_path.$b, $output, $return_var);
 				if( $return_var == 0){
-					$return_var= preg_replace("/[^0-9]/", '', $return_var);
 					$cwebp= $b;
 					break;
 				}
@@ -205,7 +204,6 @@ function getBinary(){ // Detect os and select converter command line tool
 			
 			exec($cwebp_path.$bin, $output, $return_var);
 			if($return_var == 0) {
-				$return_var= preg_replace("/[^0-9]/", '', $return_var);
 				$cwebp= $bin;
 			}
 		}
