@@ -163,11 +163,11 @@ function getBinary(){ // Detect os and select converter command line tool
 	$cwebp_path= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR;
 
 	$suppliedBinaries = [
-		'WINNT' => 'cwebp-110-windows-x64.exe',
-		'Darwin' => 'cwebp-110-mac-10_15',
-		'SunOS' => 'cwebp-060-solaris',
-		'FreeBSD' => 'cwebp-060-fbsd',
-		'Linux' => [
+		'winnt' => 'cwebp-110-windows-x64.exe',
+		'darwin' => 'cwebp-110-mac-10_15',
+		'sunos' => 'cwebp-060-solaris',
+		'freebsd' => 'cwebp-060-fbsd',
+		'linux' => [
 			// Dynamically linked executable.
 			// It seems it is slightly faster than the statically linked
 			'cwebp-110-linux-x86-64',
@@ -181,15 +181,15 @@ function getBinary(){ // Detect os and select converter command line tool
 		]
 	];
 	
-	if( !isset($suppliedBinaries[PHP_OS]) ) _die(json_encode(['status'=> 'Bin file not found!']));
-	$bin= $suppliedBinaries[PHP_OS]; // Select OS
+	if( !isset($suppliedBinaries[strtolower(PHP_OS])) ) _die(json_encode(['status'=> 'Bin file not found!']));
+	$bin= $suppliedBinaries[strtolower(PHP_OS])]; // Select OS
 
 	if( is_array($bin) ){ // Check binary
 		foreach($bin as $b){
 			if( file_exists($cwebp_path.$b) ){
 				if( !is_executable($cwebp_path.$b) ) chmod($cwebp_path.$b, 0755);
 				
-				exec( $cwebp_path.$b, $output, $return_var);
+				exec($cwebp_path.$b, $output, $return_var);
 				if( $return_var == 0){
 					$cwebp= $b;
 					break;
@@ -198,10 +198,10 @@ function getBinary(){ // Detect os and select converter command line tool
 		}
 	} else {
 		if( file_exists($cwebp_path.$bin) ){
-			if( PHP_OS != 'WINNT' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
+			if( strtolower(PHP_OS]) != 'WINNT' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
 			
 			exec($cwebp_path.$bin, $output, $return_var);
-			if( $return_var == 0) $cwebp= $bin;
+			if($return_var == 0) $cwebp= $bin;
 		}
 	}
 	
@@ -219,8 +219,7 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 		$full_path= $dir.DIRECTORY_SEPARATOR.$file;
 		
 		if( // Exclude subdirectories from search
-			$file == '.' || 
-			$file == '..' || 
+			$file == '.' || $file == '..' || 
 			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'manager') !== false ||
 			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'webp') !== false
 		){
