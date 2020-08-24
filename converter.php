@@ -205,7 +205,7 @@ function getBinary(){ // Detect os and select converter command line tool
 		}
 	}
 	
-	if( !isset($cwebp) ) _die(json_encode(['status'=> 'Bin file not work!'])); 
+	if( !isset($cwebp) ) _die(json_encode(['status'=> 'Bin file not work! return code:'.$return_var])); 
 	// Download bin file from https://developers.google.com/speed/webp/docs/precompiled, into directory /connectors/converter/Binaries/
 	
 	return $cwebp;
