@@ -5,10 +5,10 @@
 and add file name in $suppliedBinaries Array in /connectors/converter/converter.php file, function getBinary(), example:
 ```PHP
 	$suppliedBinaries = [
-		'winnt' => 'cwebp-110-windows-x64.exe',
-		'darwin' => 'cwebp-110-mac-10_15',
-		'sunos' => 'cwebp-060-solaris',
-		'freebsd' => 'cwebp-060-fbsd',
+		'winnt' => 'cwebp-110-windows-x64.exe', // Microsoft Windows 64bit
+		'darwin' => 'cwebp-110-mac-10_15', // MacOSX
+		'sunos' => 'cwebp-060-solaris', // Solaris
+		'freebsd' => 'cwebp-060-fbsd', //FreeBSD
 		'linux' => [
 			// Dynamically linked executable.
 			// It seems it is slightly faster than the statically linked
@@ -22,5 +22,4 @@ and add file name in $suppliedBinaries Array in /connectors/converter/converter.
 			'cwebp-061-linux-x86-64'
 		]
 	];
-
 ```
