@@ -183,7 +183,8 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	if( !isset($suppliedBinaries[strtolower(PHP_OS)]) ) _die(json_encode(['status'=> 'Bin file not found!']));
 	$bin= $suppliedBinaries[strtolower(PHP_OS)]; // Select OS
-
+	$return_var= 'File for: '.PHP_OS.' not work!';
+	
 	if( is_array($bin) ){ // Check binary
 		foreach($bin as $b){
 			if( file_exists($cwebp_path.$b) ){
@@ -205,7 +206,10 @@ function getBinary(){ // Detect os and select converter command line tool
 		}
 	}
 	
-	if( !isset($cwebp) ) _die(json_encode(['status'=> 'Bin file not work! return code:'.$return_var])); 
+	if( !isset($cwebp) ) {
+		if(is_numeric($return_var)) _die(json_encode(['status'=> 'Bin file not work! return code:'.$return_var]));
+		else _die(json_encode(['status'=> $return_var]));
+	}
 	// Download bin file from https://developers.google.com/speed/webp/docs/precompiled, into directory /connectors/converter/Binaries/
 	
 	return $cwebp;
