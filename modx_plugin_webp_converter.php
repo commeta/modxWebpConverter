@@ -7,8 +7,8 @@ if ($modx->event->name == 'OnManagerPageBeforeRender') {
 
 
 // Modx revo plugin: replace jpg and png images to webp
-if ($modx->event->name == 'OnWebPagePrerender' && strpos( $_SERVER['HTTP_ACCEPT'], 'image/webp' ) !== false) {
-	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page');
+if ($modx->event->name == 'OnWebPagePrerender' && stripos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false) {
+	$options= array(xPDO::OPT_CACHE_KEY=>'webp_on_page');
 
 	$cache_key= md5( MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
 	$cached_webp_on_page= $modx->cacheManager->get($cache_key, $options);
@@ -17,48 +17,68 @@ if ($modx->event->name == 'OnWebPagePrerender' && strpos( $_SERVER['HTTP_ACCEPT'
 	if( empty($cached_webp_on_page) ){
 		$webp_on_page= [];
 		$uniq_imgs= [];
+		
+		
 		preg_match_all('/<img[^>]+>/i',$output, $result);
-        
-		if(count($result)){
+		if(count($result)){ // Search images in img tag
 			foreach($result[0] as $img_tag)	{
 				$img_tag= str_replace("'", '"', $img_tag);
 				preg_match('/(src)=("[^"]*")/i',$img_tag, $img[$img_tag]);						
-				$img_real = str_replace('"','',$img[$img_tag][2]);
-				$img_real = str_replace('./','',$img_real);			
-				
-				if(
-					strripos($img_real, '.jpg', -4) !== false ||
-					strripos($img_real, '.jpeg', -5) !== false ||
-					strripos($img_real, '.png', -4) !== false
-				) {
-					if( !in_array($img_real, $uniq_imgs) ){
-						$uniq_imgs[]= $img_real;
-         	 	        
-						$abs= rel2abs_img( $img_real, MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
-						$abs_base= str_replace('//', '/', MODX_BASE_PATH.$abs);
-         	 	        
-						$webp= '/webp'.$abs.'.webp';
-						$webp_base= str_replace('//', '/', MODX_BASE_PATH.$webp);
-         	 	        
-						if( file_exists($abs_base) && file_exists($webp_base) ){
-							$webp_on_page[$img_real]= $webp;
-						}
-					}
-				}
+				$img_real= str_replace('"','',$img[$img_tag][2]);
+				$img_real= str_replace('./','',$img_real);			
+
+				check_image_file($img_real, $uniq_imgs, $webp_on_page);
 			}
-        	
-			$output = str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
 		}
+
+
+		preg_match_all('/url\(([^)]*)"?\)/iu', $output, $result);
+		if(count($result)){ // Search images in url css rules
+			foreach($result[1] as $img_tag)	{
+				if(stripos($img_real, 'data:')) continue;
+				
+				$img_real= str_replace(['"',"'"], '', $img_tag);
+				check_image_file($img_real, $uniq_imgs, $webp_on_page);
+			}
+		}
+		
+
+		if(count($webp_on_page)) $output= str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
+
 
 		$modx->cacheManager->set($cache_key, serialize($webp_on_page), 0, $options);
 	} else {
 		$webp_on_page= unserialize($cached_webp_on_page);
-		if( count($webp_on_page) ){
-			$output = str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
+		if(count($webp_on_page)){
+			$output= str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
 		}
 	}
 	return '';
 }
+
+
+function check_image_file($img_real, &$uniq_imgs, &$webp_on_page){
+	if(
+		strripos($img_real, '.jpg', -4) !== false ||
+		strripos($img_real, '.jpeg', -5) !== false ||
+		strripos($img_real, '.png', -4) !== false
+	) {
+		if( !in_array($img_real, $uniq_imgs) ){
+			$uniq_imgs[]= $img_real;
+							
+			$abs= rel2abs_img( $img_real, MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
+			$abs_base= str_replace('//', '/', MODX_BASE_PATH.$abs);
+							
+			$webp= '/webp'.$abs.'.webp';
+			$webp_base= str_replace('//', '/', MODX_BASE_PATH.$webp);
+							
+			if( file_exists($abs_base) && file_exists($webp_base) ){
+				$webp_on_page[$img_real]= $webp;
+			}
+		}
+	}
+}
+
 
 
 function rel2abs_img( $rel, $base ) {
