@@ -16,8 +16,6 @@ if ($modx->event->name == 'OnWebPagePrerender' && stripos($_SERVER['HTTP_ACCEPT'
 
 	if( empty($cached_webp_on_page) ){
 		$webp_on_page= [];
-		$uniq_imgs= [];
-		
 		
 		preg_match_all('/<img[^>]+>/i',$output, $result);
 		if(count($result)){ // Search images in img tag
@@ -26,26 +24,20 @@ if ($modx->event->name == 'OnWebPagePrerender' && stripos($_SERVER['HTTP_ACCEPT'
 				preg_match('/(src)=("[^"]*")/i',$img_tag, $img[$img_tag]);						
 				$img_real= str_replace('"','',$img[$img_tag][2]);
 				$img_real= str_replace('./','',$img_real);			
-
-				check_image_file($img_real, $uniq_imgs, $webp_on_page);
+				check_image_file($img_real, $webp_on_page);
 			}
 		}
-
 
 		preg_match_all('/url\(([^)]*)"?\)/iu', $output, $result);
 		if(count($result)){ // Search images in url css rules
 			foreach($result[1] as $img_tag)	{
 				if(stripos($img_real, 'data:')) continue;
-				
 				$img_real= str_replace(['"',"'"], '', $img_tag);
-				check_image_file($img_real, $uniq_imgs, $webp_on_page);
+				check_image_file($img_real, $webp_on_page);
 			}
 		}
 		
-
 		if(count($webp_on_page)) $output= str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
-
-
 		$modx->cacheManager->set($cache_key, serialize($webp_on_page), 0, $options);
 	} else {
 		$webp_on_page= unserialize($cached_webp_on_page);
@@ -57,7 +49,9 @@ if ($modx->event->name == 'OnWebPagePrerender' && stripos($_SERVER['HTTP_ACCEPT'
 }
 
 
-function check_image_file($img_real, &$uniq_imgs, &$webp_on_page){
+function check_image_file($img_real, &$webp_on_page){
+	static $uniq_imgs= [];
+	
 	if(
 		strripos($img_real, '.jpg', -4) !== false ||
 		strripos($img_real, '.jpeg', -5) !== false ||
