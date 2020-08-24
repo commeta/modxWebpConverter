@@ -12,7 +12,15 @@ MODX Revolution плагин, который осуществляет конве
 * Binaries - Бинарники утилиты cwebp, там есть для linux, windows, macos, freebsd, solaris.
 Бинарники взяты с https://github.com/rosell-dk/webp-convert https://developers.google.com/speed/webp/docs/precompiled
 
-2. Создаем в админке плагин: modx_plugin_webp_converter.php и вешаем на событие OnManagerPageBeforeRender и OnWebPagePrerender. После чего в правом верхнем меню появится значок, по клику запустится в фоне сканирование каталогов сайта, и будет создана копия каждой картинки в подкаталоге webp. 
+2. Создаем в админке плагин: modx_plugin_webp_converter.php и вешаем на события 
+* OnManagerPageBeforeRender
+* OnWebPagePrerender
+* OnSiteRefresh 
+* OnTemplateSave 
+* OnChunkSave 
+* OnPluginSave 
+* OnSnippetSave
+После чего в правом верхнем меню появится значок, по клику запустится в фоне сканирование каталогов сайта, и будет создана копия каждой картинки в подкаталоге webp. 
 т.е. /assets/logo.png -> /webp/assets/logo.png.webp
 
 3. После конвертирования всех найденых изображений, все картинки в HTML коде сайта будут заменены на webp, если браузер их поддерживает.
