@@ -23,10 +23,12 @@ if ($modx->event->name == 'OnWebPagePrerender' && stripos($_SERVER['HTTP_ACCEPT'
 				$img_tag= str_replace("'", '"', $img_tag);
 				preg_match('/(src)=("[^"]*")/i',$img_tag, $img[$img_tag]);						
 				$img_real= str_replace('"','',$img[$img_tag][2]);
-				$img_real= str_replace('./','',$img_real);			
+				//$img_real= str_replace('./','',$img_real);			
 				check_image_file($img_real, $webp_on_page);
 			}
 		}
+		
+// Add search srcset if you need
 
 		preg_match_all('/url\(([^)]*)"?\)/iu', $output, $result);
 		if(count($result)){ // Search images in url css rules
