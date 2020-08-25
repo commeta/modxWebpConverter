@@ -5,7 +5,7 @@
 
 MODX Revolution is a plugin that converts image files to webp format.
 
-Install & use
+### Install & use
 
 1. Create a subdirectory /connectors/converter/ and fill the files there:
 * converter.php - Server api
@@ -26,6 +26,8 @@ After that, an icon will appear in the upper-right menu. When you click on it, t
 i.e. /assets/logo.png - > /webp/assets/logo.png.webp
 
 3. After converting all found images, all images in the site's HTML code will be replaced with webp, if the browser supports them.
+
+note: [Install & Update bin files](https://github.com/commeta/modxWebpConverter/blob/master/Binaries/README.md)
 
 ### The results of testing
 
