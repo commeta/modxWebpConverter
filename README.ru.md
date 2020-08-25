@@ -25,6 +25,8 @@ MODX Revolution плагин, который осуществляет конве
 
 3. После конвертирования всех найденых изображений, все картинки в HTML коде сайта будут заменены на webp, если браузер их поддерживает.
 
+note: [Установка & Обновление бинарников утилиты CWEBP](https://github.com/commeta/modxWebpConverter/blob/master/Binaries/README.md)
+
 ### Рузультаты тестирования
 
 Протестировал на MODX Revolution 2.7.3-pl!
