@@ -58,18 +58,11 @@ if(
 
 
 
-
 if( // replace jpg and png images to webp
 	$modx->event->name == 'OnWebPagePrerender' && 
 	stripos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false
 ){
-	// Uncomment this for Disable replacing for logged manager user !!!
-	
-	/*
-	if($modx->user->hasSessionContext('mgr')) { 
-		return '';
-	}
-	*/
+	// if($modx->user->hasSessionContext('mgr')) return ''; // Uncomment this for Disable replacing for logged manager user !!!
 	
 	$options= array(xPDO::OPT_CACHE_KEY=>'webp_on_page');
 
@@ -86,7 +79,6 @@ if( // replace jpg and png images to webp
 				$img_tag= str_replace("'", '"', $img_tag);
 				preg_match('/(src)=("[^"]*")/i',$img_tag, $img[$img_tag]);						
 				$img_real= str_replace('"','',$img[$img_tag][2]);
-				//$img_real= str_replace('./','',$img_real);			
 				check_image_file($img_real, $webp_on_page);
 			}
 		}
