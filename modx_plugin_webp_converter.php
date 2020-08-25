@@ -38,11 +38,10 @@
  * 
  */
  
-// Modx revo plugin: convert jpg and png images to webp in admin panel
-if ($modx->event->name == 'OnManagerPageBeforeRender') {
+
+if($modx->event->name == 'OnManagerPageBeforeRender') {// convert jpg and png images to webp in admin panel
 	$modx->controller->addJavascript('/connectors/converter/converter.js');
 }
-
 
 
 
@@ -60,8 +59,18 @@ if(
 
 
 
-// Modx revo plugin: replace jpg and png images to webp
-if ($modx->event->name == 'OnWebPagePrerender' && stripos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false) {
+if( // replace jpg and png images to webp
+	$modx->event->name == 'OnWebPagePrerender' && 
+	stripos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false
+){
+	// Uncomment this for Disable replacing for logged manager user !!!
+	
+	/*
+	if($modx->user->hasSessionContext('mgr')) { 
+		return '';
+	}
+	*/
+	
 	$options= array(xPDO::OPT_CACHE_KEY=>'webp_on_page');
 
 	$cache_key= md5( MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
