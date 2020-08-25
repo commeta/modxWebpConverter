@@ -1,7 +1,7 @@
 ## Source bin files [Getting cwebp](https://developers.google.com/speed/webp/docs/precompiled) 
 [downloads repository](https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html)
 
-## Download bin file in /connectors/converter/Binaries/ directory
+### Download bin file in /connectors/converter/Binaries/ directory
 and add\replace new file name in $suppliedBinaries Array in /connectors/converter/converter.php file, function getBinary(), example:
 ```PHP
 	$suppliedBinaries = [
