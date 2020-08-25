@@ -5,7 +5,7 @@
 
 MODX Revolution is a plugin that converts image files to webp format.
 
-### Install & use
+## Install & use
 
 1. Create a subdirectory /connectors/converter/ and fill the files there:
 * converter.php - Server api
@@ -29,7 +29,7 @@ i.e. /assets/logo.png - > /webp/assets/logo.png.webp
 
 note: [Install & Update bin files cwebp tool](https://github.com/commeta/modxWebpConverter/blob/master/Binaries/README.md)
 
-### The results of testing
+## The results of testing
 
 Tested on MODX Revolution 2.7.3-pl!
 * Windows 7 64bit XAMPP PHP 7.4.9, 
