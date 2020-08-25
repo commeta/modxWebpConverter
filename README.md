@@ -11,7 +11,8 @@ MODX Revolution is a plugin that converts image files to webp format.
 * converter.php - Server api
 * converter.js - Script for admin panel
 * Binaries - Binary utilities cwebp, there is for linux, windows, macos, freebsd, solaris.
-The binaries are taken from https://github.com/rosell-dk/webp-convert https://developers.google.com/speed/webp/docs/precompiled
+
+The binaries are taken from https://github.com/rosell-dk/webp-convert and https://developers.google.com/speed/webp/docs/precompiled
 
 [Install & Update bin files cwebp tool](https://github.com/commeta/modxWebpConverter/blob/master/Binaries/README.md)
 
