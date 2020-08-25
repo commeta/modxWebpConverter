@@ -9,7 +9,8 @@ MODX Revolution плагин, который осуществляет конве
 * converter.php - Серверное api
 * converter.js - Скрипт для админки
 * Binaries - Бинарники утилиты cwebp, там есть для linux, windows, macos, freebsd, solaris.
-Бинарники взяты с https://github.com/rosell-dk/webp-convert https://developers.google.com/speed/webp/docs/precompiled
+
+Бинарники взяты с https://github.com/rosell-dk/webp-convert и https://developers.google.com/speed/webp/docs/precompiled
 
 [Установка & Обновление бинарников утилиты CWEBP](https://github.com/commeta/modxWebpConverter/blob/master/Binaries/README.md)
 
