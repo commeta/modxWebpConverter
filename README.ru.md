@@ -11,7 +11,7 @@ MODX Revolution плагин, который осуществляет конве
 * Binaries - Бинарники утилиты cwebp, там есть для linux, windows, macos, freebsd, solaris.
 Бинарники взяты с https://github.com/rosell-dk/webp-convert https://developers.google.com/speed/webp/docs/precompiled
 
-заметка: [Установка & Обновление бинарников утилиты CWEBP](https://github.com/commeta/modxWebpConverter/blob/master/Binaries/README.md)
+[Установка & Обновление бинарников утилиты CWEBP](https://github.com/commeta/modxWebpConverter/blob/master/Binaries/README.md)
 
 2. Создаем в админке плагин: modx_plugin_webp_converter.php и вешаем на события 
 * OnManagerPageBeforeRender
