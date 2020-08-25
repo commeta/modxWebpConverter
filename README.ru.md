@@ -1,10 +1,9 @@
-## modxWebpConverter
-
 ![modxWebpConverter](https://raw.githubusercontent.com/commeta/modxWebpConverter/master/screenShot.png "modxWebpConverter")
 
-MODX Revolution плагин, который осуществляет конвертацию графических файлов в формат webp.
+## modxWebpConverter - [Webp конвертер для MODX Revo](https://webdevops.ru/blog/webp-converter-plugin-modx.html)
+MODX Revolution плагин, который осуществляет конвертацию графических файлов в формат webp. 
 
-Смысл в чем:
+### Установка:
 
 1. Создаем подкаталог /connectors/converter/ и заливаем туда файлы:
 * converter.php - Серверное api
