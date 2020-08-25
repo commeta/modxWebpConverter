@@ -3,7 +3,7 @@
 ## modxWebpConverter - [Webp конвертер для MODX Revo](https://webdevops.ru/blog/webp-converter-plugin-modx.html)
 MODX Revolution плагин, который осуществляет конвертацию графических файлов в формат webp. 
 
-### Установка:
+## Установка:
 
 1. Создаем подкаталог /connectors/converter/ и заливаем туда файлы:
 * converter.php - Серверное api
@@ -25,9 +25,9 @@ MODX Revolution плагин, который осуществляет конве
 
 3. После конвертирования всех найденых изображений, все картинки в HTML коде сайта будут заменены на webp, если браузер их поддерживает.
 
-note: [Установка & Обновление бинарников утилиты CWEBP](https://github.com/commeta/modxWebpConverter/blob/master/Binaries/README.md)
+заметка: [Установка & Обновление бинарников утилиты CWEBP](https://github.com/commeta/modxWebpConverter/blob/master/Binaries/README.md)
 
-### Рузультаты тестирования
+## Рузультаты тестирования
 
 Протестировал на MODX Revolution 2.7.3-pl!
 * Windows 7 64bit XAMPP PHP 7.4.9, 
