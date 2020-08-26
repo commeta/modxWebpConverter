@@ -5,7 +5,7 @@ Ext.onReady(function() {
 	function manual_start(){ // Click in menu link
 		let converter_count= localStorage.getItem('converter_count');
 		if(converter_count && parseInt(converter_count) > 0) {
-			if(window.count_threads <= 3) {
+			if(window.count_threads <= 3) { // Max threads!
 				window.count_threads++;
 				files_iterator();
 			}
@@ -181,4 +181,3 @@ Ext.onReady(function() {
 		}
 	}
 });
-
