@@ -10,8 +10,10 @@ Ext.onReady(function() {
 				files_iterator();
 			}
 		} else {
-			document.getElementById('converter').innerHTML= "Поиск изображений";
-			fetch_converter('get');
+			if(localStorage.getItem('converter_mode') != "get"){
+				document.getElementById('converter').innerHTML= "Поиск изображений";
+				fetch_converter('get');
+			}
 		}
 	}
 	
