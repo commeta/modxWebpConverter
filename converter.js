@@ -5,8 +5,8 @@ Ext.onReady(function() {
 	function manual_start(){ // Click in menu link
 		let converter_count= localStorage.getItem('converter_count');
 		if(converter_count && parseInt(converter_count) > 0) {
-			if(window.count_tasks <= 3) {
-				window.count_tasks++;
+			if(window.count_threads <= 3) {
+				window.count_threads++;
 				files_iterator();
 			}
 		} else {
@@ -31,8 +31,8 @@ Ext.onReady(function() {
 				converter_count--;
 				localStorage.setItem('converter_count', converter_count);
 				
-				if(window.count_tasks == 1) document.getElementById('converter').innerHTML= converter_count;
-				else document.getElementById('converter').innerHTML= window.count_tasks + 'x' + converter_count;
+				if(window.count_threads == 1) document.getElementById('converter').innerHTML= converter_count;
+				else document.getElementById('converter').innerHTML= window.count_threads + 'x' + converter_count;
 				
 				return;
 			}
@@ -44,7 +44,7 @@ Ext.onReady(function() {
 		
 		if(localStorage.getItem('converter_mode') != "clean"){
 			fetch_converter('clean'); // Clean deleted copy of files into /webp/ directory
-			window.count_tasks= 0;
+			window.count_threads= 0;
 		}
 		
 		let converter_error= localStorage.getItem('converter_error');
@@ -101,7 +101,7 @@ Ext.onReady(function() {
 						localStorage.setItem('convert_img_'+index, file);
 					});
 						
-					window.count_tasks++;
+					window.count_threads++;
 					files_iterator();
 				}
 
@@ -139,7 +139,7 @@ Ext.onReady(function() {
 	webpConverterLI.appendChild(a);
 	modxUserMenu.insertBefore(webpConverterLI, modxUserMenu.firstChild);
 
-	window.count_tasks= 0;
+	window.count_threads= 0;
 	let count_parallel_tabs= 0;
 	let concurent_tasks= 3; // Setup this value equal to the number of server processor cores -1
 	
@@ -174,7 +174,7 @@ Ext.onReady(function() {
 		
 		// Autostart max concurent task
 		if(converter_count > 0 && count_parallel_tabs < concurent_tasks) {
-			window.count_tasks++;
+			window.count_threads++;
 			files_iterator();
 		}
 	}
