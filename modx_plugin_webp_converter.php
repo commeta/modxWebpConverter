@@ -73,17 +73,29 @@ if( // replace jpg and png images to webp
 	if( empty($cached_webp_on_page) ){
 		$webp_on_page= [];
 		
-		preg_match_all('/<img[^>]+>/i',$output, $result);
+		preg_match_all('/<img[^>]+>/i', $output, $result);
 		if(count($result)){ // Search images in img tag
 			foreach($result[0] as $img_tag)	{
-				$img_tag= str_replace("'", '"', $img_tag);
-				preg_match('/(src)=("[^"]*")/i',$img_tag, $img[$img_tag]);						
-				$img_real= str_replace('"','',$img[$img_tag][2]);
+				$img_tag= str_replace("'", '"', $img_tag); // src
+				preg_match('/(src)=("[^"]*")/i', $img_tag, $img[$img_tag]);						
+				$img_real= str_replace('"', '', $img[$img_tag][2]);
 				check_image_file($img_real, $webp_on_page);
+				
+				preg_match('/(srcset)=("[^"]*")/i', $img_tag, $img[$img_tag]); // srcset
+				$srcset= explode(',', str_replace('"', '', $img[$img_tag][2]));
+				
+				foreach($srcset as $src_item){
+				    $src_a= explode(' ', $src_item);
+
+				    if(isset($src_a[0]) && !empty($src_a[0])) {
+				        check_image_file($src_a[0], $webp_on_page);
+				    } else {
+				        if(isset($src_a[1]) && !empty($src_a[1])) check_image_file($src_a[1], $webp_on_page);
+				    }
+				}
 			}
 		}
 		
-// Add search srcset if you need
 
 		preg_match_all('/url\(([^)]*)"?\)/iu', $output, $result);
 		if(count($result)){ // Search images in url css rules
@@ -93,6 +105,10 @@ if( // replace jpg and png images to webp
 				check_image_file($img_real, $webp_on_page);
 			}
 		}
+		
+		$webp_on_page['//webp/webp/']= '/webp/';
+		$webp_on_page['//webp/']= '/webp/';
+		$webp_on_page['.webp.webp']= '.webp';
 		
 		if(count($webp_on_page)) $output= str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
 		$modx->cacheManager->set($cache_key, serialize($webp_on_page), 0, $options);
@@ -104,6 +120,7 @@ if( // replace jpg and png images to webp
 	}
 	return '';
 }
+
 
 
 function check_image_file($img_real, &$webp_on_page){
@@ -119,7 +136,7 @@ function check_image_file($img_real, &$webp_on_page){
 	) {
 		$abs= rel2abs_img( $img_real, MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
 		$abs_base= str_replace('//', '/', MODX_BASE_PATH.$abs);
-							
+
 		$webp= '/webp'.$abs.'.webp';
 		$webp_base= str_replace('//', '/', MODX_BASE_PATH.$webp);
 							
