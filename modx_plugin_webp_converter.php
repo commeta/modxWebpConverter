@@ -56,7 +56,7 @@ if(
 	$modx->event->name == 'OnDocFormSave' ||
 	$modx->event->name == 'OnSnippetSave'
 ) {
-	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page'); // Clear webp modx cache
+	$options= [xPDO::OPT_CACHE_KEY=>'webp_on_page']; // Clear webp modx cache
 	$modx->cacheManager->clean($options);
 }
 
@@ -68,9 +68,9 @@ if( // replace jpg and png images to webp
 ){
 	// if($modx->user->hasSessionContext('mgr')) return ''; // Uncomment this for Disable replacing for logged manager user !!!
 	
-	$options= array(xPDO::OPT_CACHE_KEY=>'webp_on_page');
-
+	$options= [xPDO::OPT_CACHE_KEY=>'webp_on_page'];
 	$cache_key= md5( MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
+
 	$cached_webp_on_page= $modx->cacheManager->get($cache_key, $options);
 	$output= &$modx->resource->_output;
 
@@ -92,7 +92,9 @@ if( // replace jpg and png images to webp
 				    if(isset($src_a[0]) && !empty($src_a[0])) {
 				        check_image_file($src_a[0], $webp_on_page);
 				    } else {
-				        if(isset($src_a[1]) && !empty($src_a[1])) check_image_file($src_a[1], $webp_on_page);
+				        if(isset($src_a[1]) && !empty($src_a[1])) {
+				            check_image_file($src_a[1], $webp_on_page);
+				        }
 				    }
 				}
 			}
@@ -128,9 +130,9 @@ function check_image_file($img_real, &$webp_on_page){
 	$uniq_imgs[]= $img_real;
 	
 	if(
-		strripos($img_real, '.jpg', -4) !== false ||
-		strripos($img_real, '.jpeg', -5) !== false ||
-		strripos($img_real, '.png', -4) !== false
+		@strripos($img_real, '.jpg', -4) !== false ||
+		@strripos($img_real, '.jpeg', -5) !== false ||
+		@strripos($img_real, '.png', -4) !== false
 	) {
 		$abs= rel2abs_img( $img_real, MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
 		$abs_base= str_replace('//', '/', MODX_BASE_PATH.$abs);
