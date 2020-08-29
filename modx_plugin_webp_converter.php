@@ -114,9 +114,12 @@ if( // replace jpg and png images to webp
 		$webp_on_page['.webp.webp']= '.webp';
 		
 		if(count($webp_on_page)) $output= str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
-		$modx->cacheManager->set($cache_key, $output, 0, $options);
+		$modx->cacheManager->set($cache_key, serialize($webp_on_page), 0, $options);
 	} else {
-	    $output= $cached_webp_on_page;
+		$webp_on_page= unserialize($cached_webp_on_page);
+		if(count($webp_on_page)){
+			$output= str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
+		}
 	}
 	return '';
 }
