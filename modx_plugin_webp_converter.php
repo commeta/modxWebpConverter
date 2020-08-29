@@ -14,6 +14,8 @@
  *   OnChunkSave
  *   OnPluginSave
  *   OnSnippetSave
+ *   OnTemplateVarSave
+ *   OnDocFormSave
  * 
  * https://github.com/commeta/modxWebpConverter
  * https://webdevops.ru/blog/webp-converter-plugin-modx.html
@@ -50,6 +52,8 @@ if(
 	$modx->event->name == 'OnTemplateSave' ||
 	$modx->event->name == 'OnChunkSave' ||
 	$modx->event->name == 'OnPluginSave' ||
+	$modx->event->name == 'OnTemplateVarSave' ||
+	$modx->event->name == 'OnDocFormSave' ||
 	$modx->event->name == 'OnSnippetSave'
 ) {
 	$options = array(xPDO::OPT_CACHE_KEY=>'webp_on_page'); // Clear webp modx cache
