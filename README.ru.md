@@ -22,6 +22,8 @@ MODX Revolution плагин, который осуществляет конве
 * OnChunkSave 
 * OnPluginSave 
 * OnSnippetSave
+* OnTemplateVarSave
+* OnDocFormSave
 
 После чего в правом верхнем меню появится значок, по клику запустится в фоне сканирование каталогов сайта, и будет создана копия каждой картинки в подкаталоге webp. 
 т.е. /assets/logo.png -> /webp/assets/logo.png.webp
