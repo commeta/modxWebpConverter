@@ -24,6 +24,8 @@ The binaries are taken from https://github.com/rosell-dk/webp-convert and https:
 * OnChunkSave 
 * OnPluginSave 
 * OnSnippetSave
+* OnTemplateVarSave
+* OnDocFormSave
 
 After that, an icon will appear in the upper-right menu. When you click on it, the site directories will be scanned in the background, and a copy of each image in the webp subdirectory will be created. 
 i.e. /assets/logo.png - > /webp/assets/logo.png.webp
