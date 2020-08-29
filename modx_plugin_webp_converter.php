@@ -83,10 +83,8 @@ if( // replace jpg and png images to webp
 				
 				preg_match('/(srcset)=("[^"]*")/i', $img_tag, $img[$img_tag]); // srcset
 				$srcset= explode(',', str_replace('"', '', $img[$img_tag][2]));
-				
 				foreach($srcset as $src_item){
 				    $src_a= explode(' ', $src_item);
-
 				    if(isset($src_a[0]) && !empty($src_a[0])) {
 				        check_image_file($src_a[0], $webp_on_page);
 				    } else {
@@ -95,7 +93,6 @@ if( // replace jpg and png images to webp
 				}
 			}
 		}
-		
 
 		preg_match_all('/url\(([^)]*)"?\)/iu', $output, $result);
 		if(count($result)){ // Search images in url css rules
@@ -106,7 +103,7 @@ if( // replace jpg and png images to webp
 			}
 		}
 		
-		$webp_on_page['//webp/webp/']= '/webp/';
+		$webp_on_page['/webp/webp/']= '/webp/';
 		$webp_on_page['//webp/']= '/webp/';
 		$webp_on_page['.webp.webp']= '.webp';
 		
