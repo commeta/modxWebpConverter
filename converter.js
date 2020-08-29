@@ -34,7 +34,7 @@ Ext.onReady(function() {
 				localStorage.setItem('converter_count', converter_count);
 				
 				if(window.count_threads == 1) document.getElementById('converter').innerHTML= converter_count;
-				else document.getElementById('converter').innerHTML= window.count_threads + 'x' + converter_count;
+				else document.getElementById('converter').innerHTML= window.count_threads + 'x ' + converter_count;
 				
 				return;
 			}
