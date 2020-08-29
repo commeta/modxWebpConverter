@@ -164,10 +164,10 @@ function getBinary(){ // Detect os and select converter command line tool
 	$cwebp_path= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR;
 
 	$suppliedBinaries = [
-		'winnt' => 'cwebp-110-windows-x64.exe',
-		'darwin' => 'cwebp-110-mac-10_15',
-		'sunos' => 'cwebp-060-solaris',
-		'freebsd' => 'cwebp-060-fbsd',
+		'winnt' => 'cwebp-110-windows-x64.exe', // Microsoft Windows 64bit
+		'darwin' => 'cwebp-110-mac-10_15', // MacOSX
+		'sunos' => 'cwebp-060-solaris', // Solaris
+		'freebsd' => 'cwebp-060-fbsd', // FreeBSD
 		'linux' => [
 			// Dynamically linked executable.
 			// It seems it is slightly faster than the statically linked
@@ -229,6 +229,7 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 		
 		if( // Exclude subdirectories from search
 			$file == '.' || $file == '..' || 
+			mb_strlen($file) <= 5 ||
 			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'manager') !== false ||
 			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'webp') !== false
 		){
