@@ -108,12 +108,9 @@ if( // replace jpg and png images to webp
 		$webp_on_page['.webp.webp']= '.webp';
 		
 		if(count($webp_on_page)) $output= str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
-		$modx->cacheManager->set($cache_key, serialize($webp_on_page), 0, $options);
+		$modx->cacheManager->set($cache_key, $output, 0, $options);
 	} else {
-		$webp_on_page= unserialize($cached_webp_on_page);
-		if(count($webp_on_page)){
-			$output= str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
-		}
+	    $output= $cached_webp_on_page;
 	}
 	return '';
 }
@@ -137,7 +134,7 @@ function check_image_file($img_real, &$webp_on_page){
 		$webp= '/webp'.$abs.'.webp';
 		$webp_base= str_replace('//', '/', MODX_BASE_PATH.$webp);
 							
-		if( file_exists($abs_base) && file_exists($webp_base) ){
+		if( file_exists($abs_base) && file_exists($webp_base)  ){
 			$webp_on_page[$img_real]= $webp;
 		}
 	}
