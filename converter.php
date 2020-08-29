@@ -229,7 +229,6 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 		
 		if( // Exclude subdirectories from search
 			$file == '.' || $file == '..' || 
-			mb_strlen($file) <= 5 ||
 			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'manager') !== false ||
 			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'webp') !== false
 		){
@@ -240,6 +239,8 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 		if(is_dir($full_path)){
 			recursive_search_img($full_path);
 		} else {
+			if(mb_strlen($file) <= 5) continue;
+			
 			if(
 				strripos($file, '.jpg', -4) !== false ||
 				strripos($file, '.jpeg', -5) !== false ||
