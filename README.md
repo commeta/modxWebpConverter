@@ -1,4 +1,4 @@
-![modxWebpConverter](https://raw.githubusercontent.com/commeta/modxWebpConverter/master/screenShot.png "modxWebpConverter")
+![modxWebpConverter](https://webdevops.ru/ajax.php?git=screenshot "modxWebpConverter")
 
 ## modxWebpConverter - [Webp converter for MODX Revo](https://webdevops.ru/blog/webp-converter-plugin-modx.html)
 [ReadMe на русском](https://github.com/commeta/modxWebpConverter/blob/master/README.ru.md)
