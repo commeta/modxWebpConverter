@@ -15,7 +15,7 @@ $suppliedBinaries= [
 		'cwebp-110-linux-x86-64',
 
 		// Statically linked executable
-		// It may be that it on some systems works, where the dynamically linked does not (see #196)
+		// It may be that it on some systems works, where the dynamically linked does not
 		'cwebp-103-linux-x86-64-static',
 
 		// Old executable for systems in case both of the above fails
