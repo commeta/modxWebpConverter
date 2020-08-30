@@ -28,6 +28,29 @@
 ////////////////////////////////////////////////////////////////////////
 // Init
 
+$param_jpeg= "-metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory";
+$param_png= "-metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory";
+
+$suppliedBinaries= [
+	'winnt' => 'cwebp-110-windows-x64.exe', // Microsoft Windows 64bit
+	'darwin' => 'cwebp-110-mac-10_15', // MacOSX
+	'sunos' => 'cwebp-060-solaris', // Solaris
+	'freebsd' => 'cwebp-060-fbsd', // FreeBSD
+	'linux' => [
+		// Dynamically linked executable.
+		// It seems it is slightly faster than the statically linked
+		'cwebp-110-linux-x86-64',
+
+		// Statically linked executable
+		// It may be that it on some systems works, where the dynamically linked does not (see #196)
+		'cwebp-103-linux-x86-64-static',
+
+		// Old executable for systems in case both of the above fails
+		'cwebp-061-linux-x86-64'
+	]
+];
+
+
 $BASE_PATH= dirname(dirname(__DIR__));
 define('BASE_PATH', $BASE_PATH);
 
@@ -127,13 +150,11 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		ignore_user_abort(true);
 		
 		if($ext == 'jpg' || $ext == 'jpeg'){
-			$param= "-metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory";
-			exec($cwebp.' '.$param.' "'.$source.'" -o "'.$dest.'"',	$output, $return_var);
+			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'"',	$output, $return_var);
 		}
 		
 		if($ext == 'png'){
-			$param= "-metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory";
-			exec($cwebp.' '.$param.' "'.$source.'" -o "'.$dest.'"', $output, $return_var);
+			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'"', $output, $return_var);
 		}
 	} else {
 		$return_var= 127;
@@ -155,6 +176,8 @@ die_convert:
 // Functions
 
 function getBinary(){ // Detect os and select converter command line tool
+	global $suppliedBinaries;
+	
 	$disablefunc= array(); // Check disabled exec function
 	$disablefunc= explode(",", str_replace(" ", "", @ini_get("disable_functions")));
 	if(!is_callable("exec") || in_array("exec", $disablefunc)) _die(json_encode(['status'=> 'Exec function disabled!']));	
@@ -163,25 +186,6 @@ function getBinary(){ // Detect os and select converter command line tool
 	// https://developers.google.com/speed/webp/docs/precompiled
 	$cwebp_path= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR;
 
-	$suppliedBinaries = [
-		'winnt' => 'cwebp-110-windows-x64.exe', // Microsoft Windows 64bit
-		'darwin' => 'cwebp-110-mac-10_15', // MacOSX
-		'sunos' => 'cwebp-060-solaris', // Solaris
-		'freebsd' => 'cwebp-060-fbsd', // FreeBSD
-		'linux' => [
-			// Dynamically linked executable.
-			// It seems it is slightly faster than the statically linked
-			'cwebp-110-linux-x86-64',
-
-			// Statically linked executable
-			// It may be that it on some systems works, where the dynamically linked does not (see #196)
-			'cwebp-103-linux-x86-64-static',
-
-			// Old executable for systems in case both of the above fails
-			'cwebp-061-linux-x86-64'
-		]
-	];
-	
 	$return_var= 'Bin file for: '.PHP_OS.' not found in /connectors/converter/Binaries/';
 
 	if( !isset($suppliedBinaries[strtolower(PHP_OS)]) ) _die(json_encode(['status'=> $return_var]));
