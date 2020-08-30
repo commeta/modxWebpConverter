@@ -2,10 +2,15 @@
 "use strict";
 
 Ext.onReady(function() {
+	
+	let concurent_tasks= 3; // Setup this value equal to the number of server processor cores -1
+	let max_count_threads= 4; // Setup this value equal to the number of server processor cores -1
+
+	
 	function manual_start(){ // Click in menu link
 		let converter_count= localStorage.getItem('converter_count');
 		if(converter_count && parseInt(converter_count) > 0) {
-			if(window.count_threads <= 3) { // Max threads!
+			if(window.count_threads <= (max_count_threads - 1)) { // Max threads!
 				window.count_threads++;
 				files_iterator();
 			}
@@ -143,7 +148,6 @@ Ext.onReady(function() {
 
 	window.count_threads= 0;
 	let count_parallel_tabs= 0;
-	let concurent_tasks= 3; // Setup this value equal to the number of server processor cores -1
 	
 	// Detect concurent tasks
 	if(localStorage.length > 0) {
