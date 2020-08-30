@@ -48,3 +48,5 @@ Compression of a single file takes from 28ms to 5800ms.
 The resulting volume of compressed files: 1005MB, no loss in quality was noticed.
 
 I opened 12 tabs in the browser at the same time, as a result, the encoding went to 12 threads, I have a Ryzen 5 2600X Six-Core processing of all files took about 45 minutes.
+
+!["Yandex.Metrika counter"](https://mc.yandex.ru/watch/66866185)
