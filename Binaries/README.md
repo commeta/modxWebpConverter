@@ -4,22 +4,22 @@
 ### Download bin file in /connectors/converter/Binaries/ directory
 and add\replace new file name in $suppliedBinaries Array in /connectors/converter/converter.php file, example:
 ```PHP
-	$suppliedBinaries = [
-		'winnt' => 'cwebp-110-windows-x64.exe', // Microsoft Windows 64bit
-		'darwin' => 'cwebp-110-mac-10_15', // MacOSX
-		'sunos' => 'cwebp-060-solaris', // Solaris
-		'freebsd' => 'cwebp-060-fbsd', //FreeBSD
-		'linux' => [
-			// Dynamically linked executable.
-			// It seems it is slightly faster than the statically linked
-			'cwebp-110-linux-x86-64',
+$suppliedBinaries= [
+	'winnt' => 'cwebp-110-windows-x64.exe', // Microsoft Windows 64bit
+	'darwin' => 'cwebp-110-mac-10_15', // MacOSX
+	'sunos' => 'cwebp-060-solaris', // Solaris
+	'freebsd' => 'cwebp-060-fbsd', // FreeBSD
+	'linux' => [
+		// Dynamically linked executable.
+		// It seems it is slightly faster than the statically linked
+		'cwebp-110-linux-x86-64',
 
-			// Statically linked executable
-			// It may be that it on some systems works, where the dynamically linked does not (see #196)
-			'cwebp-103-linux-x86-64-static',
+		// Statically linked executable
+		// It may be that it on some systems works, where the dynamically linked does not (see #196)
+		'cwebp-103-linux-x86-64-static',
 
-			// Old executable for systems in case both of the above fails
-			'cwebp-061-linux-x86-64'
-		]
-	];
+		// Old executable for systems in case both of the above fails
+		'cwebp-061-linux-x86-64'
+	]
+];
 ```
