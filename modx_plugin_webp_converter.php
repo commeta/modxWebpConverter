@@ -40,6 +40,9 @@
  * 
  */
  
+$disable_replacing_for_logged_user= false; // set true for Disable replacing for logged manager user !!!
+
+
 
 if($modx->event->name == 'OnManagerPageBeforeRender') {// convert jpg and png images to webp in admin panel
 	$modx->controller->addJavascript('/connectors/converter/converter.js');
@@ -66,7 +69,7 @@ if( // replace jpg and png images to webp
 	$modx->event->name == 'OnWebPagePrerender' && 
 	stripos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false
 ){
-	// if($modx->user->hasSessionContext('mgr')) return ''; // Uncomment this for Disable replacing for logged manager user !!!
+	if($disable_replacing_for_logged_user && $modx->user->hasSessionContext('mgr')) return ''; 
 	
 	$options= [xPDO::OPT_CACHE_KEY=>'webp_on_page'];
 	$cache_key= md5(MODX_SITE_URL.$_SERVER['REQUEST_URI']);
