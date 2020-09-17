@@ -86,17 +86,17 @@ if( // replace jpg and png images to webp
 				$img_tag= str_replace("'", '"', $img_tag); // src
 				preg_match('/(src)=("[^"]*")/i', $img_tag, $img[$img_tag]);						
 				$img_real= str_replace('"', '', $img[$img_tag][2]);
-				check_image_file($img_real, $webp_on_page);
+				check_image_file_for_webp_converter($img_real, $webp_on_page);
 				
 				preg_match('/(srcset)=("[^"]*")/i', $img_tag, $img[$img_tag]); // srcset
 				$srcset= explode(',', str_replace('"', '', $img[$img_tag][2]));
 				foreach($srcset as $src_item){
 				    $src_a= explode(' ', $src_item);
 				    if(isset($src_a[0]) && !empty($src_a[0])) {
-				        check_image_file($src_a[0], $webp_on_page);
+				        check_image_file_for_webp_converter($src_a[0], $webp_on_page);
 				    } else {
 				        if(isset($src_a[1]) && !empty($src_a[1])) {
-				            check_image_file($src_a[1], $webp_on_page);
+				            check_image_file_for_webp_converter($src_a[1], $webp_on_page);
 				        }
 				    }
 				}
@@ -108,7 +108,7 @@ if( // replace jpg and png images to webp
 			foreach($result[1] as $img_tag)	{
 				if(stripos($img_real, 'data:')) continue;
 				$img_real= str_replace(['"',"'"], '', $img_tag);
-				check_image_file($img_real, $webp_on_page);
+				check_image_file_for_webp_converter($img_real, $webp_on_page);
 			}
 		}
 		
@@ -129,7 +129,7 @@ if( // replace jpg and png images to webp
 
 
 
-function check_image_file($img_real, &$webp_on_page){
+function check_image_file_for_webp_converter($img_real, &$webp_on_page){
 	static $uniq_imgs= [];
 	
 	if(in_array($img_real, $uniq_imgs)) return;
