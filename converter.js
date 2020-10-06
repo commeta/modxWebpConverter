@@ -1,7 +1,7 @@
-/*! converter.js | (c) 2020 commeta <dcs-spb@ya.ru> GNU 2 License | https://github.com/commeta/modxWebpConverter, https://webdevops.ru/blog/webp-converter-plugin-modx.html */
-"use strict";
+/*! converter.js | (c) 2020 commeta <dcs-spb@ya.ru> Apache 2.0 License | https://github.com/commeta/modxWebpConverter, https://webdevops.ru/blog/webp-converter-plugin-modx.html */
 
 Ext.onReady(function() {
+	"use strict";
 	
 	let concurent_tasks= 3; // Setup this value equal to the number of server processor cores -1
 	let max_count_threads= 4; // Setup this value equal to the number of server processor cores -1
@@ -9,6 +9,7 @@ Ext.onReady(function() {
 	
 	function manual_start(){ // Click in menu link
 		let converter_count= localStorage.getItem('converter_count');
+		
 		if(converter_count && parseInt(converter_count) > 0) {
 			if(window.count_threads <= (max_count_threads - 1)) { // Max threads!
 				window.count_threads++;
@@ -116,8 +117,16 @@ Ext.onReady(function() {
 					files_iterator();
 				}
 			} else {
-				if(typeof( data.status ) != "undefined") document.getElementById('converter').innerHTML= data.status;
-				else error_catcher();
+				if(typeof( data.status ) != "undefined") {
+					document.getElementById('converter').innerHTML= data.status;
+					
+					if( data.status.indexOf('Bin file') != -1 ){
+						localStorage.setItem('converter_mode', 'bin_error');
+					}
+				} else {
+					error_catcher();
+				}
+				
 			}
 		}).catch(() => error_catcher());
 	}
@@ -134,7 +143,6 @@ Ext.onReady(function() {
 	
 	// Init
 	let modxUserMenu= document.getElementById('modx-user-menu');
-	
 	let a= document.createElement("a");
 	const textUserMenu= document.createTextNode( "WEBP Конвертер" );
 	a.setAttribute("id", "converter");
