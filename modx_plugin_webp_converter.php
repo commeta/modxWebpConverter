@@ -90,7 +90,7 @@ if( // replace jpg and png images to webp
 				
 				preg_match('/(data-src)=("[^"]*")/i', $img_tag, $img[$img_tag]);						
 				$img_real= str_replace('"', '', $img[$img_tag][2]);
-				check_image_file($img_real, $webp_on_page);
+				check_image_file_for_webp_converter($img_real, $webp_on_page);
 
 				
 				preg_match('/(srcset)=("[^"]*")/i', $img_tag, $img[$img_tag]); // srcset
