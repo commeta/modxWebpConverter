@@ -166,11 +166,14 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 
 die_convert:
 
-	_die(json_encode([
+	$ret= json_encode([
 		'status'=> 'complete', 
 		'mode'=> 'convert',
 		'return_var'=> $return_var
-	]));
+	]);
+
+	if(json_last_error() != JSON_ERROR_NONE) _die(json_encode(['status'=> 'Wrong filenames encoding!']));
+	_die($ret);
 }
 
 
@@ -352,14 +355,18 @@ class time_limit_exception { // Exit if time exceed time_limit
 				http_response_code(200);
 				
 				if(isset($images) && isset($cwebp)){
-					_die(json_encode([
+					$ret= json_encode([
 						'status'=> 'complete', 
 						'mode'=> 'get', 
 						'images'=> $images,
 						'count'=> count($images),
 						'cwebp'=> $cwebp,
 						'execution_time' => 'exceeded'
-					]));
+					]);
+
+					if(json_last_error() != JSON_ERROR_NONE) _die(json_encode(['status'=> 'Wrong filenames encoding!']));
+					_die($ret);
+
 				}
 			}
 		}   
