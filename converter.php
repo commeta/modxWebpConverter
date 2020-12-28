@@ -61,6 +61,8 @@ set_time_limit($max_time);
 ini_set('MAX_EXECUTION_TIME', $max_time);
 
 header('Content-type: application/json');
+$time_limit_exception= new time_limit_exception;
+
 if(!isset($_POST['json'])) _die(json_encode([]));
 $json= json_decode($_POST['json'], true);
 
@@ -79,8 +81,6 @@ $modx->initialize('mgr');
 if(!$modx->user->hasSessionContext('mgr')) { // Check authorization
     _die(json_encode(['status'=> 'Unauthorized']));
 }
-
-$time_limit_exception= new time_limit_exception;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -115,14 +115,17 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 	
 	$time_limit_exception->enable();
 	recursive_search_img(BASE_PATH);
-
-	_die(json_encode([
+		
+	$ret= json_encode([
 		'status'=> 'complete', 
 		'mode'=> 'get', 
 		'images'=> $images,
 		'count'=> count($images),
 		'cwebp'=> $cwebp
-	]));
+	]);
+
+	if(json_last_error() != JSON_ERROR_NONE) _die(json_encode(['status'=> 'Wrong filenames encoding!']));
+	_die($ret);
 }
 
 
