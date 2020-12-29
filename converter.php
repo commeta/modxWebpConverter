@@ -172,7 +172,6 @@ die_convert:
 		'return_var'=> $return_var
 	]);
 
-	if(json_last_error() != JSON_ERROR_NONE) _die(json_encode(['status'=> 'Wrong filenames encoding!']));
 	_die($ret);
 }
 
@@ -366,7 +365,6 @@ class time_limit_exception { // Exit if time exceed time_limit
 
 					if(json_last_error() != JSON_ERROR_NONE) _die(json_encode(['status'=> 'Wrong filenames encoding!']));
 					_die($ret);
-
 				}
 			}
 		}   
