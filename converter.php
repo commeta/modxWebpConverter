@@ -146,7 +146,7 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 		default:
 			_die(json_encode(['status'=> 'JSON_ERROR']));
 		break;
-    }
+	}
 }
 
 
