@@ -124,8 +124,29 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 		'cwebp'=> $cwebp
 	]);
 
-	if(json_last_error() != JSON_ERROR_NONE) _die(json_encode(['status'=> 'Wrong filenames encoding!']));
-	_die($ret);
+
+	switch (json_last_error()) {
+		case JSON_ERROR_NONE:
+			_die($ret);
+		case JSON_ERROR_DEPTH:
+			_die(json_encode(['status'=> 'JSON_ERROR_DEPTH']));
+		break;
+		case JSON_ERROR_STATE_MISMATCH:
+			_die(json_encode(['status'=> 'JSON_ERROR_STATE_MISMATCH']));
+		break;
+		case JSON_ERROR_CTRL_CHAR:
+			_die(json_encode(['status'=> 'JSON_ERROR_CTRL_CHAR']));
+		break;
+		case JSON_ERROR_SYNTAX:
+			_die(json_encode(['status'=> 'JSON_ERROR_SYNTAX']));
+		break;
+		case JSON_ERROR_UTF8:
+			_die(json_encode(['status'=> 'JSON_ERROR_UTF8']));
+		break;
+		default:
+			_die(json_encode(['status'=> 'JSON_ERROR']));
+		break;
+    }
 }
 
 
