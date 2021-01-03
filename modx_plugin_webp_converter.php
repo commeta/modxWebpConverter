@@ -91,7 +91,6 @@ if( // replace jpg and png images to webp
 				preg_match('/(data-src)=("[^"]*")/i', $img_tag, $img[$img_tag]);						
 				$img_real= str_replace('"', '', $img[$img_tag][2]);
 				check_image_file_for_webp_converter($img_real, $webp_on_page);
-
 				
 				preg_match('/(srcset)=("[^"]*")/i', $img_tag, $img[$img_tag]); // srcset
 				$srcset= explode(',', str_replace('"', '', $img[$img_tag][2]));
@@ -133,65 +132,67 @@ if( // replace jpg and png images to webp
 }
 
 
+if(!function_exists('check_image_file_for_webp_converter')) {
+	function check_image_file_for_webp_converter($img_real, &$webp_on_page){
+		static $uniq_imgs= [];
+		
+		if(in_array($img_real, $uniq_imgs)) return;
+		$uniq_imgs[]= $img_real;
+		
+		if(
+			@strripos($img_real, '.jpg', -4) !== false ||
+			@strripos($img_real, '.jpeg', -5) !== false ||
+			@strripos($img_real, '.png', -4) !== false
+		) {
+			$abs= rel2abs_img( $img_real, MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
+			$abs_base= str_replace('//', '/', MODX_BASE_PATH.$abs);
 
-function check_image_file_for_webp_converter($img_real, &$webp_on_page){
-	static $uniq_imgs= [];
-	
-	if(in_array($img_real, $uniq_imgs)) return;
-	$uniq_imgs[]= $img_real;
-	
-	if(
-		@strripos($img_real, '.jpg', -4) !== false ||
-		@strripos($img_real, '.jpeg', -5) !== false ||
-		@strripos($img_real, '.png', -4) !== false
-	) {
-		$abs= rel2abs_img( $img_real, MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
-		$abs_base= str_replace('//', '/', MODX_BASE_PATH.$abs);
-
-		$webp= '/webp'.$abs.'.webp';
-		$webp_base= str_replace('//', '/', MODX_BASE_PATH.$webp);
-							
-		if( file_exists($abs_base) && file_exists($webp_base)  ){
-			$webp_on_page[$img_real]= $webp;
+			$webp= '/webp'.$abs.'.webp';
+			$webp_base= str_replace('//', '/', MODX_BASE_PATH.$webp);
+								
+			if( file_exists($abs_base) && file_exists($webp_base)  ){
+				$webp_on_page[$img_real]= $webp;
+			}
 		}
 	}
 }
 
 
+if(!function_exists('rel2abs_img')) { 
+	function rel2abs_img( $rel, $base ) {
+		// parse base URL  and convert to local variables: $scheme, $host,  $path
+		extract( parse_url( $base ) );
 
-function rel2abs_img( $rel, $base ) {
-	// parse base URL  and convert to local variables: $scheme, $host,  $path
-	extract( parse_url( $base ) );
+		if ( strpos( $rel,"//" ) === 0 ) {
+			return $scheme . ':' . $rel;
+		}
 
-	if ( strpos( $rel,"//" ) === 0 ) {
-		return $scheme . ':' . $rel;
+		// return if already absolute URL
+		if ( parse_url( $rel, PHP_URL_SCHEME ) != '' ) {
+			return $rel;
+		}
+
+		// queries and anchors
+		if ( $rel[0] == '#' || $rel[0] == '?' ) {
+			return $base . $rel;
+		}
+
+		// remove non-directory element from path
+		$path = preg_replace( '#/[^/]*$#', '', $path );
+
+		// destroy path if relative url points to root
+		if ( $rel[0] ==  '/' ) {
+			$path = '';
+		}
+
+		// dirty absolute URL
+		$abs = $path . "/" . $rel;
+
+		// replace '//' or  '/./' or '/foo/../' with '/'
+		$abs = preg_replace( "/(\/\.?\/)/", "/", $abs );
+		$abs = preg_replace( "/\/(?!\.\.)[^\/]+\/\.\.\//", "/", $abs );
+
+		// absolute URL is ready!
+		return $abs;
 	}
-
-	// return if already absolute URL
-	if ( parse_url( $rel, PHP_URL_SCHEME ) != '' ) {
-		return $rel;
-	}
-
-	// queries and anchors
-	if ( $rel[0] == '#' || $rel[0] == '?' ) {
-		return $base . $rel;
-	}
-
-	// remove non-directory element from path
-	$path = preg_replace( '#/[^/]*$#', '', $path );
-
-	// destroy path if relative url points to root
-	if ( $rel[0] ==  '/' ) {
-		$path = '';
-	}
-
-	// dirty absolute URL
-	$abs = $path . "/" . $rel;
-
-	// replace '//' or  '/./' or '/foo/../' with '/'
-	$abs = preg_replace( "/(\/\.?\/)/", "/", $abs );
-	$abs = preg_replace( "/\/(?!\.\.)[^\/]+\/\.\.\//", "/", $abs );
-
-	// absolute URL is ready!
-	return $abs;
 }
