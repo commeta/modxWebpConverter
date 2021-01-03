@@ -182,7 +182,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 				$return_var= imageWebp($img, $dest, 80);
 				imagedestroy($img);
 				
-				if (filesize($dest) % 2 == 1) {
+				if(file_exists($dest) && filesize($dest) % 2 == 1) {
 					file_put_contents($dest, "\0", FILE_APPEND);
 				}
 			}
