@@ -172,9 +172,20 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		}
 		
 		ignore_user_abort(true);
+		$return_var= 0;
 		
 		if($ext == 'jpg' || $ext == 'jpeg'){
-			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'"',	$output, $return_var);
+			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'"', $output, $return_var);
+			
+			if($return_var == 255){ // Patch if error: Unsupported color conversion request, for YCCK JPGs
+				$img = imageCreateFromJpeg($source);
+				$return_var= imageWebp($img, $dest, 80);
+				imagedestroy($img);
+				
+				if (filesize($dest) % 2 == 1) {
+					file_put_contents($dest, "\0", FILE_APPEND);
+				}
+			}
 		}
 		
 		if($ext == 'png'){
