@@ -380,6 +380,10 @@ function check_gd(){ // Prior to GD library version 2.2.5, WEBP does not have al
 			$gd['WebP Alpha Channel Support']= 0;
 		}
 		
+		if(!in_array('WebP Support', $gd)) $gd['WebP Support']= 0;
+		if(!in_array('JPEG Support', $gd)) $gd['JPEG Support']= 0;
+		if(!in_array('PNG Support', $gd)) $gd['PNG Support']= 0;
+		
 		return $gd;
 	} else {
 		return false;
