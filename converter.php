@@ -371,6 +371,9 @@ function _die($return){
 function check_gd(){ // Prior to GD library version 2.2.5, WEBP does not have alpha channel support
 	if(extension_loaded('gd') && function_exists('gd_info') ){
 		$gd= gd_info();
+		
+		if(!in_array('GD Version', $gd)) $gd['GD Version']= '0.0.0';
+		
 		preg_match('/\\d+\\.\\d+(?:\\.\\d+)?/', $gd['GD Version'], $matches);
 		$gd['Ver']= $matches[0];
 		
