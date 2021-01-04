@@ -53,6 +53,7 @@ $suppliedBinaries= [
 $BASE_PATH= dirname(dirname(__DIR__));
 define('BASE_PATH', $BASE_PATH);
 
+
 // Decrement max execution time, keep correct server or proxy connection timeout - equal php execution time!
 $max_time= ini_get('max_execution_time');
 $max_time--;
@@ -277,8 +278,8 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 		
 		if( // Exclude subdirectories from search
 			$file == '.' || $file == '..' || 
-			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'manager') !== false ||
-			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'webp') !== false
+			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'manager'.DIRECTORY_SEPARATOR) !== false ||
+			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR) !== false
 		){
 			continue;
 		}
@@ -287,10 +288,12 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 		if(is_dir($full_path)){
 			recursive_search_img($full_path);
 		} else {
+			$ext= strtolower(pathinfo($file, PATHINFO_EXTENSION));
+			
 			if(
-				@strripos($file, '.jpg', -4) !== false ||
-				@strripos($file, '.jpeg', -5) !== false ||
-				@strripos($file, '.png', -4) !== false
+				$ext == 'jpg' ||
+				$ext == 'jpeg' ||
+				$ext == 'png' 
 			){
 				$img= str_replace(BASE_PATH, '', $full_path);
 				$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR.$img.'.webp';
@@ -317,7 +320,9 @@ function recursive_search_webp($dir){ // Search webp files recursive
 		if(is_dir($full_path)){
 			recursive_search_webp($full_path);
 		} else {
-			if(strripos($file, '.webp', -5) !== false ){
+			$ext= strtolower(pathinfo($file, PATHINFO_EXTENSION));
+			
+			if($ext == 'webp'){
 				$dest= BASE_PATH.str_replace(
 					[BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $full_path
 				);
@@ -371,9 +376,9 @@ function _die($return){
 function check_gd(){ // Prior to GD library version 2.2.5, WEBP does not have alpha channel support
 	if(extension_loaded('gd') && function_exists('gd_info') ){
 		$gd= gd_info();
-		
+
 		if(!in_array('GD Version', $gd)) $gd['GD Version']= '0.0.0';
-		
+
 		preg_match('/\\d+\\.\\d+(?:\\.\\d+)?/', $gd['GD Version'], $matches);
 		$gd['Ver']= $matches[0];
 		
@@ -383,9 +388,11 @@ function check_gd(){ // Prior to GD library version 2.2.5, WEBP does not have al
 			$gd['WebP Alpha Channel Support']= 0;
 		}
 		
+		
 		if(!in_array('WebP Support', $gd)) $gd['WebP Support']= 0;
 		if(!in_array('JPEG Support', $gd)) $gd['JPEG Support']= 0;
 		if(!in_array('PNG Support', $gd)) $gd['PNG Support']= 0;
+		
 		
 		return $gd;
 	} else {
