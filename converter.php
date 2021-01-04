@@ -111,7 +111,6 @@ die_clean:
 if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to converting
 	$images= [];
 	$cwebp= getBinary();
-	$gd= check_gd();
 	
 	$time_limit_exception->enable();
 	recursive_search_img(BASE_PATH);
@@ -121,8 +120,7 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 		'mode'=> 'get', 
 		'images'=> $images,
 		'count'=> count($images),
-		'cwebp'=> $cwebp,
-		'gd'=> $gd
+		'cwebp'=> $cwebp
 	]);
 
 
