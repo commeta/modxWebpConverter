@@ -24,7 +24,6 @@
  * 
  */
 
-
 ////////////////////////////////////////////////////////////////////////
 // Init
 
@@ -112,6 +111,7 @@ die_clean:
 if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to converting
 	$images= [];
 	$cwebp= getBinary();
+	$gd= check_gd();
 	
 	$time_limit_exception->enable();
 	recursive_search_img(BASE_PATH);
@@ -121,7 +121,8 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 		'mode'=> 'get', 
 		'images'=> $images,
 		'count'=> count($images),
-		'cwebp'=> $cwebp
+		'cwebp'=> $cwebp,
+		'gd'=> $gd
 	]);
 
 
@@ -161,7 +162,8 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 	$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.$json['file'].'.webp';
 	$source= BASE_PATH.$json['file'];
 	$ext= strtolower(pathinfo($json['file'], PATHINFO_EXTENSION));
-
+	$gd_support= check_gd();
+	
 	if(!is_dir(dirname($dest))){
 		mkdir(dirname($dest), 0755, true);
 	}
@@ -177,12 +179,19 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		if($ext == 'jpg' || $ext == 'jpeg'){
 			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'"', $output, $return_var);
 			
-			if($return_var == 255){ // Patch if error: Unsupported color conversion request, for YCCK JPGs
+			
+			// Patch if error: Unsupported color conversion request, for YCCK JPGs
+			if(
+				$return_var == 255 && 
+				$gd_support !== false && 
+				$gd_support['WebP Support'] == 1 && 
+				$gd_support['JPEG Support'] == 1
+			){ 
 				$img = imageCreateFromJpeg($source);
 				$return_var= imageWebp($img, $dest, 80);
 				imagedestroy($img);
 				
-				if(file_exists($dest) && filesize($dest) % 2 == 1) {
+				if(file_exists($dest) && filesize($dest) % 2 == 1) { // No null byte at the end of the file
 					file_put_contents($dest, "\0", FILE_APPEND);
 				}
 			}
@@ -357,6 +366,26 @@ function _die($return){
 	
 	$time_limit_exception->disable();
 	die($return);
+}
+
+
+
+function check_gd(){ // Prior to GD library version 2.2.5, WEBP does not have alpha channel support
+	if(extension_loaded('gd') && function_exists('gd_info') ){
+		$gd= gd_info();
+		preg_match('/\\d+\\.\\d+(?:\\.\\d+)?/', $gd['GD Version'], $matches);
+		$gd['Ver']= $matches[0];
+		
+		if(version_compare($gd['Ver'], '2.2.5') >= 0) {
+			$gd['WebP Alpha Channel Support']= 1; 
+		} else {
+			$gd['WebP Alpha Channel Support']= 0;
+		}
+		
+		return $gd;
+	} else {
+		return false;
+	}
 }
 
 
