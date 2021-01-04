@@ -9,7 +9,6 @@ Ext.onReady(function() {
 	
 	function manual_start(){ // Click in menu link
 		let converter_count= localStorage.getItem('converter_count');
-		
 		if(converter_count && parseInt(converter_count) > 0) {
 			if(window.count_threads <= (max_count_threads - 1)) { // Max threads!
 				window.count_threads++;
@@ -64,6 +63,7 @@ Ext.onReady(function() {
 		if(converter_mode) {
 			if(converter_mode == "get"){
 				document.getElementById('converter').innerHTML= "Ошибка, попробуйте позже";
+				localStorage.setItem('converter_mode', 'error');
 			}
 			if(converter_mode == "convert"){
 				files_iterator();
@@ -119,14 +119,10 @@ Ext.onReady(function() {
 			} else {
 				if(typeof( data.status ) != "undefined") {
 					document.getElementById('converter').innerHTML= data.status;
-					
-					if( data.status.indexOf('Bin file') != -1 ){
-						localStorage.setItem('converter_mode', 'bin_error');
-					}
+					localStorage.setItem('converter_mode', data.status);
 				} else {
 					error_catcher();
 				}
-				
 			}
 		}).catch(() => error_catcher());
 	}
