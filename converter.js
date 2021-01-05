@@ -2,7 +2,7 @@
 
 Ext.onReady(function() {
 	"use strict";
-	
+		
 	let concurent_tasks= 3; // Setup this value equal to the number of server processor cores -1
 	let max_count_threads= 4; // Setup this value equal to the number of server processor cores -1
 
@@ -114,12 +114,33 @@ Ext.onReady(function() {
 				}
 
 				if(data.mode == 'convert'){
+					if(typeof( data.output ) != "undefined" && data.output){
+						let output=  "Source:\n" + data.source + "\n\nDestination:\n" + data.dest + "\n\nWarnings&Errors:\n";
+						
+						data.output.forEach(function(line, index, created) {
+							output+= line;
+						});
+						
+						console.log(output);
+					}
+					
 					files_iterator();
 				}
 			} else {
 				if(typeof( data.status ) != "undefined") {
 					document.getElementById('converter').innerHTML= data.status;
 					localStorage.setItem('converter_mode', data.status);
+					
+					if(data.mode == 'get_bin' && typeof( data.output ) != "undefined"){
+						let output= "";
+						
+						data.output.forEach(function(line, index, created) {
+							output+= "<li>" + line + "</li>";
+						});
+						
+						Ext.MessageBox.minWidth = document.documentElement.clientWidth / 100 * 70;
+						Ext.MessageBox.alert(data.status,'<div style="max-height: 70vh; overflow-y: auto;"><ul>' + output + '<ul></div>');
+					}
 				} else {
 					error_catcher();
 				}
