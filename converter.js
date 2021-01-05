@@ -8,6 +8,39 @@ Ext.onReady(function() {
 
 	
 	function manual_start(){ // Click in menu link
+		if(localStorage.getItem('converter_mode') == "clean"){ // Generate report
+			document.getElementById('converter').innerHTML= "Конвертация закончена";
+			localStorage.setItem('converter_mode', 'report');
+			
+			let output= "";
+			let keys= [];
+			
+			for(let i= 0, length= localStorage.length; i < length; i++) {
+				let key= localStorage.key(i);
+				
+				if(key && key.includes('convert_log') ){
+					output+= "<li>" + localStorage.getItem(key) + "<hr /></li>";
+					keys.push(key);
+				}
+			}
+			
+			
+			for(let i= 0; i < keys.length; i++) {
+				localStorage.removeItem(keys[i]);
+			}
+			
+			
+			if(output.length){
+				Ext.MessageBox.minWidth = parseInt(document.documentElement.clientWidth) / 100 * 70;
+				Ext.MessageBox.alert('WEBP Конвертер: Журнал','<div style="max-height: 70vh; overflow-y: auto;"><ul>' + output + '<ul></div>');
+			} else {
+				document.getElementById('converter').innerHTML= "Журнал пуст";
+			}
+			
+			return;
+		}
+		
+		
 		let converter_count= localStorage.getItem('converter_count');
 		if(converter_count && parseInt(converter_count) > 0) {
 			if(window.count_threads <= (max_count_threads - 1)) { // Max threads!
@@ -27,7 +60,7 @@ Ext.onReady(function() {
 		for(let i= 0, length= localStorage.length; i < length; i++) {
 			let key= localStorage.key(i);
 			
-			if( key.includes('convert_img') ){
+			if(key && key.includes('convert_img') ){
 				localStorage.setItem(window.converter_token, "active");
 				
 				let file= localStorage.getItem(key);
@@ -45,7 +78,7 @@ Ext.onReady(function() {
 			}
 		}
 		
-		document.getElementById('converter').innerHTML= "Конвертация закончена";
+		document.getElementById('converter').innerHTML= "Просмотр журнала";
 		localStorage.setItem(window.converter_token, "stopped");
 		localStorage.setItem('converter_count', 0);
 		
@@ -69,7 +102,7 @@ Ext.onReady(function() {
 				files_iterator();
 			}
 			if(converter_mode == "clean"){
-				document.getElementById('converter').innerHTML= "Конвертация закончена";
+				document.getElementById('converter').innerHTML= "Просмотр журнала";
 			}
 		}
 	}
@@ -115,13 +148,17 @@ Ext.onReady(function() {
 
 				if(data.mode == 'convert'){
 					if(typeof( data.output ) != "undefined" && data.output){
-						let output=  "Source:\n" + data.source + "\n\nDestination:\n" + data.dest + "\n\nWarnings&Errors:\n";
+						let output=  "<b>Source:</b> " + data.source + "<br /><br />";
+						output+= "<b>Destination:</b> " + data.dest;
 						
-						data.output.forEach(function(line, index, created) {
-							output+= line + "\n";
-						});
-						
-						console.log(output);
+						if(data.output.length) {
+							output+= "<br /><br />";
+							
+							data.output.forEach(function(line, index) {
+								output+= "<span style='color:red'>" + line + "</span><br />";
+							});
+						}
+						localStorage.setItem('convert_log_' + rand() + rand(), output);
 					}
 					
 					files_iterator();
@@ -135,10 +172,10 @@ Ext.onReady(function() {
 						let output= "";
 						
 						data.output.forEach(function(line, index, created) {
-							output+= "<li>" + line + "</li>";
+							output+= "<li>" + line + "<hr /></li>";
 						});
 						
-						Ext.MessageBox.minWidth = document.documentElement.clientWidth / 100 * 70;
+						Ext.MessageBox.minWidth = parseInt(document.documentElement.clientWidth) / 100 * 70;
 						Ext.MessageBox.alert(data.status,'<div style="max-height: 70vh; overflow-y: auto;"><ul>' + output + '<ul></div>');
 					}
 				} else {
@@ -179,7 +216,7 @@ Ext.onReady(function() {
 		for(let i= 0, length= localStorage.length; i < length; i++) {
 			let key= localStorage.key(i);
 			
-			if( key.includes('converter_token') ){
+			if(key && key.includes('converter_token') ){
 				let converter_token= localStorage.getItem(key);
 				if(converter_token == "active"){
 					count_parallel_tabs++;
