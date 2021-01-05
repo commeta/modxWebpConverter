@@ -174,9 +174,10 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		
 		ignore_user_abort(true);
 		$return_var= 0;
+		$output= [];
 		
 		if($ext == 'jpg' || $ext == 'jpeg'){
-			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'"', $output, $return_var);
+			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
 			
 			
 			// Patch if error: Unsupported color conversion request, for YCCK JPGs
@@ -186,18 +187,20 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 				$gd_support['WebP Support'] == 1 && 
 				$gd_support['JPEG Support'] == 1
 			){ 
-				$img = imageCreateFromJpeg($source);
+				$img= imageCreateFromJpeg($source);
 				$return_var= imageWebp($img, $dest, 80);
 				imagedestroy($img);
 				
 				if($return_var && filesize($dest) % 2 == 1) { // No null byte at the end of the file
 					file_put_contents($dest, "\0", FILE_APPEND);
+					$return_var= 0;
+					$output= [];
 				}
 			}
 		}
 		
 		if($ext == 'png'){
-			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'"', $output, $return_var);
+			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
 		}
 	} else {
 		$return_var= 127;
@@ -209,6 +212,9 @@ die_convert:
 	$ret= json_encode([
 		'status'=> 'complete', 
 		'mode'=> 'convert',
+		'source'=>  $source,
+		'dest'=>  $dest,
+		'output'=>  $output,
 		'return_var'=> $return_var
 	]);
 
@@ -232,6 +238,7 @@ function getBinary(){ // Detect os and select converter command line tool
 	$cwebp_path= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR;
 
 	$return_var= 'Bin file for: '.PHP_OS.' not found in /connectors/converter/Binaries/';
+	$output= [];
 
 	if( !isset($suppliedBinaries[strtolower(PHP_OS)]) ) _die(json_encode(['status'=> $return_var]));
 	$bin= $suppliedBinaries[strtolower(PHP_OS)]; // Select OS
@@ -241,7 +248,8 @@ function getBinary(){ // Detect os and select converter command line tool
 			if( file_exists($cwebp_path.$b) ){
 				if( !is_executable($cwebp_path.$b) ) chmod($cwebp_path.$b, 0755);
 				
-				exec($cwebp_path.$b, $output, $return_var);
+				$output[]= $cwebp_path.$b;
+				exec($cwebp_path.$b.' 2>&1', $output, $return_var);
 				if( $return_var == 0){
 					$cwebp= $b;
 					break;
@@ -252,7 +260,8 @@ function getBinary(){ // Detect os and select converter command line tool
 		if( file_exists($cwebp_path.$bin) ){
 			if( strtolower(PHP_OS) != 'winnt' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
 			
-			exec($cwebp_path.$bin, $output, $return_var);
+			$output[]= $cwebp_path.$bin;
+			exec($cwebp_path.$bin.' 2>&1', $output, $return_var);
 			if($return_var == 0) {
 				$cwebp= $bin;
 			}
@@ -260,8 +269,8 @@ function getBinary(){ // Detect os and select converter command line tool
 	}
 	
 	if( !isset($cwebp) ) {
-		if(is_numeric($return_var)) _die(json_encode(['status'=> 'Bin file not work! return code:'.$return_var]));
-		else _die(json_encode(['status'=> $return_var]));
+		if(is_numeric($return_var)) _die(json_encode(['status'=> 'Bin file not work! return code:'.$return_var, 'mode'=> 'get_bin', 'output'=> $output, 'return_var'=> $return_var]));
+		else _die(json_encode(['status'=> $return_var, 'mode'=> 'get_bin', 'output'=> $output, 'return_var'=> 127]));
 	}
 	// Download bin file from https://developers.google.com/speed/webp/docs/precompiled, into directory /connectors/converter/Binaries/
 	
