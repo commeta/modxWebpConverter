@@ -214,8 +214,8 @@ die_convert:
 	$ret= json_encode([
 		'status'=> 'complete', 
 		'mode'=> 'convert',
-		'source'=>  $source,
-		'dest'=>  $dest,
+		'source'=>  $json['file'],
+		'dest'=>  DIRECTORY_SEPARATOR.'webp'.$json['file'].'.webp',
 		'output'=>  $output,
 		'return_var'=> $return_var
 	]);
