@@ -118,7 +118,7 @@ Ext.onReady(function() {
 						let output=  "Source:\n" + data.source + "\n\nDestination:\n" + data.dest + "\n\nWarnings&Errors:\n";
 						
 						data.output.forEach(function(line, index, created) {
-							output+= line;
+							output+= line + "\n";
 						});
 						
 						console.log(output);
