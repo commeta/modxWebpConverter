@@ -194,15 +194,23 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 				if($return_var && filesize($dest) % 2 == 1) { // No null byte at the end of the file
 					file_put_contents($dest, "\0", FILE_APPEND);
 				}
+				
 				if($return_var){
 					$return_var= 0;
-					$output[]= "Use PHP GD for convert image!";
+					$output[]= "Use PHP GD for convert image !";
+				} else {
+					$return_var= 255;
+					$output[]= "Fatal error, destination file not created !!!";
 				}
 			}
 		}
 		
 		if($ext == 'png'){
 			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
+			
+			if($return_var == 255){
+				$output[]= "Fatal error, destination file not created !!!";
+			}
 		}
 	} else {
 		$return_var= 127;
