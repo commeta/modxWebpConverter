@@ -112,10 +112,11 @@ if(!function_exists('check_image_file_for_webp_converter')) {
 		if(in_array($img_real, $uniq_imgs)) return;
 		$uniq_imgs[]= $img_real;
 		
+		$ext= strtolower(pathinfo($img_real, PATHINFO_EXTENSION));
 		if(
-			@strripos($img_real, '.jpg', -4) !== false ||
-			@strripos($img_real, '.jpeg', -5) !== false ||
-			@strripos($img_real, '.png', -4) !== false
+			$ext == 'jpg' ||
+			$ext == 'jpeg' ||
+			$ext == 'png' 
 		) {
 			$abs= rel2abs_img( $img_real, MODX_SITE_URL.parse_url($_SERVER['REQUEST_URI'])['path'] );
 			$abs_base= str_replace('//', '/', MODX_BASE_PATH.$abs);
@@ -129,6 +130,7 @@ if(!function_exists('check_image_file_for_webp_converter')) {
 		}
 	}
 }
+
 
 
 if( // replace jpg and png images to webp
@@ -154,7 +156,7 @@ if( // replace jpg and png images to webp
 				$img_real= str_replace('"', '', $img[$img_tag][2]);
 				check_image_file_for_webp_converter($img_real, $webp_on_page);
 				
-				preg_match('/(data-src)=("[^"]*")/i', $img_tag, $img[$img_tag]);						
+				preg_match('/(data-src)=("[^"]*")/i', $img_tag, $img[$img_tag]); // data-src						
 				$img_real= str_replace('"', '', $img[$img_tag][2]);
 				check_image_file_for_webp_converter($img_real, $webp_on_page);
 				
