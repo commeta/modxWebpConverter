@@ -154,7 +154,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		
 	$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.$json['file'].'.webp';
 	$source= BASE_PATH.$json['file'];
-	$ext= strtolower(pathinfo($json['file'], PATHINFO_EXTENSION));
+	$imagetype= exif_imagetype($source);
 	$gd_support= check_gd();
 	$return_var= 255;
 	$output= [];
@@ -174,7 +174,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		
 		ignore_user_abort(true);
 		
-		if($ext == 'jpg' || $ext == 'jpeg'){
+		if($imagetype == IMAGETYPE_JPEG){
 			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
 			
 			if( // Patch if error: Unsupported color conversion request, for YCCK JPGs
@@ -188,7 +188,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 			}
 		}
 		
-		if($ext == 'png'){
+		if($imagetype == IMAGETYPE_PNG){
 			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
 			
 			if( // Patch if error:
@@ -268,7 +268,9 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	$disablefunc= array(); // Check disabled exec function
 	$disablefunc= explode(",", str_replace(" ", "", @ini_get("disable_functions")));
-	if(!is_callable("exec") || in_array("exec", $disablefunc)) _die(json_encode(['status'=> 'Exec function disabled!']));	
+	if(!is_callable("exec") || in_array("exec", $disablefunc)) {
+		_die(json_encode(['status'=> 'Exec function disabled!']));	
+	}
 	
 	// https://github.com/rosell-dk/webp-convert
 	// https://developers.google.com/speed/webp/docs/precompiled
@@ -306,8 +308,29 @@ function getBinary(){ // Detect os and select converter command line tool
 	}
 	
 	if( !isset($cwebp) ) {
-		if(is_numeric($return_var)) _die(json_encode(['status'=> 'Bin file not work! return code: '.$return_var, 'mode'=> 'get_bin', 'output'=> $output, 'return_var'=> $return_var]));
-		else _die(json_encode(['status'=> $return_var, 'mode'=> 'get_bin', 'output'=> $output, 'return_var'=> 127]));
+		if(is_numeric($return_var)) {
+			_die(
+				json_encode(
+					[
+						'status'=> 'Bin file not work! return code: '.$return_var, 
+						'mode'=> 'get_bin', 
+						'output'=> $output, 
+						'return_var'=> $return_var
+					]
+				)
+			);
+		} else {
+			_die(
+				json_encode(
+					[
+						'status'=> $return_var, 
+						'mode'=> 'get_bin', 
+						'output'=> $output, 
+						'return_var'=> 127
+					]
+				)
+			);
+		}
 	}
 	// Download bin file from https://developers.google.com/speed/webp/docs/precompiled, into directory /connectors/converter/Binaries/
 	
