@@ -293,7 +293,7 @@ function getBinary(){ // Detect os and select converter command line tool
 			if( is_file($cwebp_path.$b) ){
 				if( !is_executable($cwebp_path.$b) ) chmod($cwebp_path.$b, 0755);
 				
-				$output[]= $cwebp_path.$b;
+				$output[]= "<hr />".$cwebp_path.$b;
 				exec($cwebp_path.$b.' 2>&1', $output, $return_var);
 				if( $return_var == 0){
 					$cwebp= $b;
