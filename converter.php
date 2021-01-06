@@ -170,6 +170,8 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 				$output[]= "Info, destination file already converted.";
 				goto die_convert;
 			}
+			
+			unlink($dest);
 		}
 		
 		ignore_user_abort(true);
@@ -178,7 +180,6 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
 			
 			if( // Patch if error: Unsupported color conversion request, for YCCK JPGs
-				!is_file($dest) &&
 				$return_var != 0 && 
 				$gd_support !== false && 
 				$gd_support['WebP Support'] == 1 && 
@@ -192,7 +193,6 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
 			
 			if( // Patch if error:
-				!is_file($dest) &&
 				$return_var != 0 && 
 				$gd_support !== false && 
 				$gd_support['WebP Support'] == 1 && 
@@ -313,25 +313,21 @@ function getBinary(){ // Detect os and select converter command line tool
 	if( !isset($cwebp) ) {
 		if(is_numeric($return_var)) {
 			_die(
-				json_encode(
-					[
-						'status'=> 'Bin file not work! return code: '.$return_var, 
-						'mode'=> 'get_bin', 
-						'output'=> $output, 
-						'return_var'=> $return_var
-					]
-				)
+				json_encode([
+					'status'=> 'Bin file not work! return code: '.$return_var, 
+					'mode'=> 'get_bin', 
+					'output'=> $output, 
+					'return_var'=> $return_var
+				])
 			);
 		} else {
 			_die(
-				json_encode(
-					[
-						'status'=> $return_var, 
-						'mode'=> 'get_bin', 
-						'output'=> $output, 
-						'return_var'=> 127
-					]
-				)
+				json_encode([
+					'status'=> $return_var, 
+					'mode'=> 'get_bin', 
+					'output'=> $output, 
+					'return_var'=> 127
+				])
 			);
 		}
 	}
