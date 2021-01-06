@@ -204,11 +204,15 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		}
 	} else {
 		$return_var= 127;
+		$output[]= "Fatal error, source file not found !!!";
+	}
+	
+	if(!is_file($dest)){		
 		$output[]= "Fatal error, destination file not created !!!";
 	}
 	
-	if(!is_file($dest)){
-		$output[]= "Fatal error, source file not found !!!";
+	if($imagetype != IMAGETYPE_JPEG && $imagetype != IMAGETYPE_PNG){
+		$output[]= "Fatal error, not supported source file format !!!";
 	}
 	
 
@@ -242,7 +246,6 @@ function gdConvert($source, $dest){
 			$img= imagecreatefrompng($source);
 		break;
 		default:
-			$output[]= "Fatal error, not supported file format !!!";
 			return false;
 	}
 
