@@ -172,7 +172,7 @@ Ext.onReady(function() {
 						let output= "";
 						
 						data.output.forEach(function(line, index, created) {
-							output+= "<li>" + line + "<hr /></li>";
+							output+= "<li>" + line + "</li>";
 						});
 						
 						Ext.MessageBox.minWidth = parseInt(document.documentElement.clientWidth) / 100 * 70;
