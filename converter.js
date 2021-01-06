@@ -125,6 +125,7 @@ Ext.onReady(function() {
 			if(response.status !== 200) {
 				return Promise.reject();
 			}
+			
 			return response.json();
 		}).then(function(data) {
 			if(typeof( data.status ) != "undefined" && data.status == "complete"){
