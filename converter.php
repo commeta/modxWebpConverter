@@ -164,6 +164,8 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		mkdir(dirname($dest), 0755, true);
 	}
 
+	if(strtolower(PHP_OS) == 'winnt') $err=  '';
+	else $err= ' 2>&1';
 
 	if($imagetype != IMAGETYPE_JPEG && $imagetype != IMAGETYPE_PNG){
 		$output[]= "Fatal error, not supported source file format !!!";
@@ -184,7 +186,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		ignore_user_abort(true);
 		
 		if($imagetype == IMAGETYPE_JPEG){
-			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
+			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'"'.$err, $output, $return_var);
 			
 			if( // Patch if error: Unsupported color conversion request, for YCCK JPGs
 				$return_var != 0 && 
@@ -197,7 +199,7 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		}
 		
 		if($imagetype == IMAGETYPE_PNG){
-			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
+			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'"'.$err, $output, $return_var);
 			
 			if( // Patch if error:
 				$return_var != 0 && 
@@ -306,8 +308,11 @@ function getBinary(){ // Detect os and select converter command line tool
 		if( is_file($cwebp_path.$bin) ){
 			if( strtolower(PHP_OS) != 'winnt' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
 			
+			if(strtolower(PHP_OS) == 'winnt') $err=  '';
+			else $err= ' 2>&1';
+			
 			$output[]= $cwebp_path.$bin;
-			exec($cwebp_path.$bin.' 2>&1', $output, $return_var);
+			exec($cwebp_path.$bin.$err, $output, $return_var);
 			if($return_var == 0) {
 				$cwebp= $bin;
 			}
