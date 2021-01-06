@@ -25,12 +25,11 @@ Ext.onReady(function() {
 			}
 			
 			
-			for(let i= 0; i < keys.length; i++) {
-				localStorage.removeItem(keys[i]);
-			}
-			
-			
 			if(output.length){
+				for(let i= 0; i < keys.length; i++) {
+					localStorage.removeItem(keys[i]);
+				}
+				
 				Ext.MessageBox.minWidth = parseInt(document.documentElement.clientWidth) / 100 * 70;
 				Ext.MessageBox.alert('WEBP Конвертер: Журнал','<div style="max-height: 70vh; overflow-y: auto;"><ul>' + output + '<ul></div>');
 			} else {
