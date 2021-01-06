@@ -34,6 +34,8 @@ Ext.onReady(function() {
 				Ext.MessageBox.alert('WEBP Конвертер: Журнал','<div style="max-height: 70vh; overflow-y: auto;"><ul>' + output + '<ul></div>');
 			} else {
 				document.getElementById('converter').innerHTML= "Журнал пуст";
+				
+				setTimeout(() => document.getElementById('converter').innerHTML= "Конвертация закончена", 3000);
 			}
 			
 			return;
