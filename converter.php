@@ -130,29 +130,23 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 			_die($ret);
 		case JSON_ERROR_DEPTH:
 			_die(json_encode(['status'=> 'JSON_ERROR_DEPTH']));
-		break;
 		case JSON_ERROR_STATE_MISMATCH:
 			_die(json_encode(['status'=> 'JSON_ERROR_STATE_MISMATCH']));
-		break;
 		case JSON_ERROR_CTRL_CHAR:
 			_die(json_encode(['status'=> 'JSON_ERROR_CTRL_CHAR']));
-		break;
 		case JSON_ERROR_SYNTAX:
 			_die(json_encode(['status'=> 'JSON_ERROR_SYNTAX']));
-		break;
 		case JSON_ERROR_UTF8:
 			_die(json_encode(['status'=> 'JSON_ERROR_UTF8']));
-		break;
 		default:
 			_die(json_encode(['status'=> 'JSON_ERROR']));
-		break;
 	}
 }
 
 
 
 if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
-	if( isset($json['cwebp']) && file_exists(__DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp']) ){
+	if( isset($json['cwebp']) && is_file(__DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp']) ){
 		$cwebp= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp'];
 	} else {
 		_die(json_encode(['status'=> 'Wrong Bin file!']));
@@ -162,56 +156,39 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 	$source= BASE_PATH.$json['file'];
 	$ext= strtolower(pathinfo($json['file'], PATHINFO_EXTENSION));
 	$gd_support= check_gd();
+	$return_var= 255;
+	$output= [];
+	
 	
 	if(!is_dir(dirname($dest))){
 		mkdir(dirname($dest), 0755, true);
 	}
 
-	if(file_exists($source)){
-		if( file_exists($dest) ){
+	if(is_file($source)){
+		if( is_file($dest) ){
 			if(filemtime($dest) > filemtime($source)) goto die_convert;
 		}
 		
 		ignore_user_abort(true);
-		$return_var= 0;
-		$output= [];
 		
 		if($ext == 'jpg' || $ext == 'jpeg'){
 			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
 			
-			
-			// Patch if error: Unsupported color conversion request, for YCCK JPGs
-			if(
+			if( // Patch if error: Unsupported color conversion request, for YCCK JPGs
 				!is_file($dest) &&
 				$return_var != 0 && 
 				$gd_support !== false && 
 				$gd_support['WebP Support'] == 1 && 
 				$gd_support['JPEG Support'] == 1
 			){ 
-				$img= imageCreateFromJpeg($source);
-				$return_var= imageWebp($img, $dest, 80);
-				imagedestroy($img);
-				
-				if($return_var && filesize($dest) % 2 == 1) { // No null byte at the end of the file
-					file_put_contents($dest, "\0", FILE_APPEND);
-				}
-				
-				if($return_var){
-					$return_var= 0;
-					$output[]= "Use PHP GD for convert image !";
-				}
-			}
-			
-			if(!is_file($dest)){
-				$output[]= "Fatal error, destination file not created !!!";
+				$return_var= gdConvert($source, $dest);
 			}
 		}
 		
 		if($ext == 'png'){
 			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
 			
-			
-			if(
+			if( // Patch if error:
 				!is_file($dest) &&
 				$return_var != 0 && 
 				$gd_support !== false && 
@@ -219,27 +196,16 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 				$gd_support['WebP Alpha Channel Support'] == 1 && 
 				$gd_support['PNG Support'] == 1
 			){ 
-				$img= imagecreatefrompng($source);
-				$return_var= imageWebp($img, $dest, 80);
-				imagedestroy($img);
-				
-				if($return_var && filesize($dest) % 2 == 1) { // No null byte at the end of the file
-					file_put_contents($dest, "\0", FILE_APPEND);
-				}
-				
-				if($return_var){
-					$return_var= 0;
-					$output[]= "Use PHP GD for convert image !";
-				}
-			}
-			
-			
-			if(!is_file($dest)){
-				$output[]= "Fatal error, destination file not created !!!";
+				$return_var= gdConvert($source, $dest);
 			}
 		}
 	} else {
 		$return_var= 127;
+		$output[]= "Fatal error, destination file not created !!!";
+	}
+	
+	if(!is_file($dest)){
+		$output[]= "Fatal error, source file not found !!!";
 	}
 	
 
@@ -262,6 +228,37 @@ die_convert:
 ////////////////////////////////////////////////////////////////////////
 // Functions
 
+function gdConvert($source, $dest){
+	global $output;
+
+	switch(exif_imagetype($source)){
+		case IMAGETYPE_JPEG:
+			$img= imagecreatefromjpeg($source);
+		break;
+		case IMAGETYPE_PNG:
+			$img= imagecreatefrompng($source);
+		break;
+		default:
+			return false;
+	}
+
+	$return_var= imageWebp($img, $dest, 80);
+	imagedestroy($img);
+				
+	if($return_var && filesize($dest) % 2 == 1) { // No null byte at the end of the file
+		file_put_contents($dest, "\0", FILE_APPEND);
+	}
+				
+	if($return_var){
+		$return_var= 0;
+		$output[]= "Use PHP GD for convert image !";
+	}
+	
+	return $return_var;
+}
+
+
+
 function getBinary(){ // Detect os and select converter command line tool
 	global $suppliedBinaries;
 	
@@ -281,7 +278,7 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	if( is_array($bin) ){ // Check binary
 		foreach($bin as $b){
-			if( file_exists($cwebp_path.$b) ){
+			if( is_file($cwebp_path.$b) ){
 				if( !is_executable($cwebp_path.$b) ) chmod($cwebp_path.$b, 0755);
 				
 				$output[]= $cwebp_path.$b;
@@ -293,7 +290,7 @@ function getBinary(){ // Detect os and select converter command line tool
 			}
 		}
 	} else {
-		if( file_exists($cwebp_path.$bin) ){
+		if( is_file($cwebp_path.$bin) ){
 			if( strtolower(PHP_OS) != 'winnt' && !is_executable($cwebp_path.$bin) ) chmod($cwebp_path.$bin, 0755);
 			
 			$output[]= $cwebp_path.$bin;
@@ -343,7 +340,7 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 				$img= str_replace(BASE_PATH, '', $full_path);
 				$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR.$img.'.webp';
 				
-				if( file_exists($dest) && filemtime($full_path) < filemtime($dest) ) continue;
+				if( is_file($dest) && filemtime($full_path) < filemtime($dest) ) continue;
 				
 				global $images;
 				$images[]= $img;
@@ -372,7 +369,7 @@ function recursive_search_webp($dir){ // Search webp files recursive
 					[BASE_PATH.DIRECTORY_SEPARATOR.'webp', '.webp'], '', $full_path
 				);
 				
-				if( !file_exists($dest) ) {
+				if( !is_file($dest) ) {
 					unlink($full_path);
 				}
 			}
