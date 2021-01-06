@@ -164,6 +164,13 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		mkdir(dirname($dest), 0755, true);
 	}
 
+
+	if($imagetype != IMAGETYPE_JPEG && $imagetype != IMAGETYPE_PNG){
+		$output[]= "Fatal error, not supported source file format !!!";
+		goto die_convert;
+	}
+
+
 	if(is_file($source)){
 		if( is_file($dest) ){
 			if(filemtime($dest) > filemtime($source)) {
@@ -211,9 +218,6 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		$output[]= "Fatal error, destination file not created !!!";
 	}
 	
-	if($imagetype != IMAGETYPE_JPEG && $imagetype != IMAGETYPE_PNG){
-		$output[]= "Fatal error, not supported source file format !!!";
-	}
 	
 
 die_convert:
@@ -258,7 +262,7 @@ function gdConvert($source, $dest){
 				
 	if($return_var){
 		$return_var= 0;
-		$output[]= "Use PHP GD for convert image !";
+		$output[]= "Info, use PHP GD for convert image !";
 	}
 	
 	return $return_var;
@@ -269,7 +273,7 @@ function gdConvert($source, $dest){
 function getBinary(){ // Detect os and select converter command line tool
 	global $suppliedBinaries;
 	
-	$disablefunc= array(); // Check disabled exec function
+	// Check disabled exec function
 	$disablefunc= explode(",", str_replace(" ", "", @ini_get("disable_functions")));
 	if(!is_callable("exec") || in_array("exec", $disablefunc)) {
 		_die(json_encode(['status'=> 'Exec function disabled!']));	
@@ -312,23 +316,19 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	if( !isset($cwebp) ) {
 		if(is_numeric($return_var)) {
-			_die(
-				json_encode([
-					'status'=> 'Bin file not work! return code: '.$return_var, 
-					'mode'=> 'get_bin', 
-					'output'=> $output, 
-					'return_var'=> $return_var
-				])
-			);
+			_die(json_encode([
+				'status'=> 'Bin file not work! return code: '.$return_var, 
+				'mode'=> 'get_bin', 
+				'output'=> $output, 
+				'return_var'=> $return_var
+			]));
 		} else {
-			_die(
-				json_encode([
-					'status'=> $return_var, 
-					'mode'=> 'get_bin', 
-					'output'=> $output, 
-					'return_var'=> 127
-				])
-			);
+			_die(json_encode([
+				'status'=> $return_var, 
+				'mode'=> 'get_bin', 
+				'output'=> $output, 
+				'return_var'=> 127
+			]));
 		}
 	}
 	// Download bin file from https://developers.google.com/speed/webp/docs/precompiled, into directory /connectors/converter/Binaries/
