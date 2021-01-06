@@ -166,7 +166,10 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 
 	if(is_file($source)){
 		if( is_file($dest) ){
-			if(filemtime($dest) > filemtime($source)) goto die_convert;
+			if(filemtime($dest) > filemtime($source)) {
+				$output[]= "Info, destination file already converted.";
+				goto die_convert;
+			}
 		}
 		
 		ignore_user_abort(true);
@@ -239,6 +242,7 @@ function gdConvert($source, $dest){
 			$img= imagecreatefrompng($source);
 		break;
 		default:
+			$output[]= "Fatal error, not supported file format !!!";
 			return false;
 	}
 
