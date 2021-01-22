@@ -49,9 +49,9 @@ $suppliedBinaries= [
 	]
 ];
 
-$excludeSubdirectories= [
-	DIRECTORY_SEPARATOR.'manager'.DIRECTORY_SEPARATOR,
-	DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR
+$excludeSubdirectories= [// Exclude subdirectories from search
+	DIRECTORY_SEPARATOR.'manager',
+	DIRECTORY_SEPARATOR.'webp'
 ];
 
 
