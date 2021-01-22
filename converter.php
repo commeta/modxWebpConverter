@@ -49,6 +49,11 @@ $suppliedBinaries= [
 	]
 ];
 
+$excludeSubdirectories= [
+	DIRECTORY_SEPARATOR.'manager'.DIRECTORY_SEPARATOR,
+	DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR
+];
+
 
 $BASE_PATH= dirname(dirname(__DIR__));
 define('BASE_PATH', $BASE_PATH);
@@ -343,16 +348,16 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 	while(($file= readdir($odir)) !== FALSE){
 		$full_path= $dir.DIRECTORY_SEPARATOR.$file;
 		
-		if( // Exclude subdirectories from search
-			$file == '.' || $file == '..' || 
-			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'manager'.DIRECTORY_SEPARATOR) !== false ||
-			strpos($full_path, BASE_PATH.DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR) !== false
-		){
+		if($file == '.' || $file == '..'){
 			continue;
 		}
 		
 		
 		if(is_dir($full_path)){
+			foreach($GLOBALS["excludeSubdirectories"] as $subdir){ // Exclude subdirectories from search
+				if(preg_match("~" . $subdir . "~", $full_path)) continue 2;
+			}
+			
 			recursive_search_img($full_path);
 		} else {
 			$ext= strtolower(pathinfo($file, PATHINFO_EXTENSION));
@@ -367,8 +372,7 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 				
 				if( is_file($dest) && filemtime($full_path) < filemtime($dest) ) continue;
 				
-				global $images;
-				$images[]= $img;
+				$GLOBALS["images"][]= $img;
 			}
 		}
 	}
