@@ -50,6 +50,8 @@ $suppliedBinaries= [
 ];
 
 $excludeSubdirectories= [
+	DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'packages',
+	DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR,
 	DIRECTORY_SEPARATOR.'manager'.DIRECTORY_SEPARATOR,
 	DIRECTORY_SEPARATOR.'webp'.DIRECTORY_SEPARATOR
 ];
@@ -355,7 +357,7 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 		
 		if(is_dir($full_path)){
 			foreach($GLOBALS["excludeSubdirectories"] as $subdir){ // Exclude subdirectories from search
-				if(preg_match("~" . $subdir . "~", $full_path)) continue 2;
+				if(preg_match("~" . BASE_PATH.$subdir . "~", $full_path)) continue 2;
 			}
 			
 			recursive_search_img($full_path);
