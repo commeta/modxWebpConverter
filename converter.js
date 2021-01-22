@@ -3,8 +3,8 @@
 Ext.onReady(function() {
 	"use strict";
 		
-	let concurent_tasks= 3; // Setup this value equal to the number of server processor cores -1
-	let max_count_threads= 4; // Setup this value equal to the number of server processor cores -1
+	const concurent_tasks= 3; // Setup this value equal to the number of server processor cores -1
+	const max_count_threads= 4; // Setup this value equal to the number of server processor cores -1
 
 	
 	function manual_start(){ // Click in menu link
@@ -160,7 +160,14 @@ Ext.onReady(function() {
 								output+= "<span style='color:red'>" + line + "</span><br />";
 							});
 						}
-						localStorage.setItem('convert_log_' + rand() + rand(), output);
+						
+						
+						let itemName= '';
+						do { // Add log message
+							itemName= 'convert_log_' + rand();
+						}	while(localStorage.getItem(itemName) != null);
+						
+						localStorage.setItem(itemName, output);
 					}
 					
 					files_iterator();
@@ -188,7 +195,7 @@ Ext.onReady(function() {
 	}
 	
 	
-	let rand= function() {
+	const rand= function() {
 		return Math.random().toString(12).substr(2); // remove `0.`
 	};
 
@@ -200,7 +207,7 @@ Ext.onReady(function() {
 	// Init
 	let modxUserMenu= document.getElementById('modx-user-menu');
 	let a= document.createElement("a");
-	const textUserMenu= document.createTextNode( "WEBP Конвертер" );
+	let textUserMenu= document.createTextNode( "WEBP Конвертер" );
 	a.setAttribute("id", "converter");
 	a.setAttribute("title", "Очередь изображений для webp конвертера");
 	a.onclick= manual_start;
