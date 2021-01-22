@@ -355,7 +355,7 @@ function recursive_search_img($dir){ // Search jpeg and png files recursive
 		
 		if(is_dir($full_path)){
 			foreach($GLOBALS["excludeSubdirectories"] as $subdir){ // Exclude subdirectories from search
-				if(preg_match("~" . BASE_PATH.$subdir . "~", $full_path)) continue 2;
+				if(strpos($full_path, BASE_PATH.$subdir) !== false) continue 2;
 			}
 			
 			recursive_search_img($full_path);
