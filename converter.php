@@ -154,10 +154,14 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 
 if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
 	if(isset($json['cwebp']) && $json['cwebp'] != 'gd'){
-		if(is_file(__DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp']) ){
-			$cwebp= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp'];
+		if($json['cwebp'] == 'system') {
+			$cwebp= '/usr/bin/cwebp';
 		} else {
-			_die(json_encode(['status'=> 'Wrong Bin file!']));
+			if(is_file(__DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp']) ){
+				$cwebp= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp'];
+			} else {
+				_die(json_encode(['status'=> 'Wrong Bin file!']));
+			}
 		}
 	}
 	
@@ -343,6 +347,16 @@ function getBinary(){ // Detect os and select converter command line tool
 	}
 	
 	if( !isset($cwebp) ) {
+		
+		if(strtolower(PHP_OS) == 'linux' && is_file('/usr/bin/cwebp')) {
+			$output[]= '/usr/bin/cwebp';
+			exec('/usr/bin/cwebp'.' 2>&1', $output, $return_var);
+			if($return_var == 0) {
+				return 'system';
+			}
+		}
+		
+		
 		if(is_numeric($return_var)) {
 			if($gd) return "gd";
 			_die(json_encode([
