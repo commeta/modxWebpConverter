@@ -105,10 +105,12 @@ if(!function_exists('rel2abs_img')) {
 }
 
 
+
 if(!function_exists('check_image_file_for_webp_converter')) {
 	function check_image_file_for_webp_converter($img_real, &$webp_on_page){
 		static $uniq_imgs= [];
 		
+		$img_real= trim($img_real);
 		if(in_array($img_real, $uniq_imgs)) return;
 		$uniq_imgs[]= $img_real;
 		
@@ -156,7 +158,7 @@ if( // replace jpg and png images to webp
 				$img_real= str_replace('"', '', $img[$img_tag][2]);
 				check_image_file_for_webp_converter($img_real, $webp_on_page);
 				
-				preg_match('/(data-src)=("[^"]*")/i', $img_tag, $img[$img_tag]); // data-src						
+				preg_match('/(data-src)=("[^"]*")/i', $img_tag, $img[$img_tag]); // data-src					
 				$img_real= str_replace('"', '', $img[$img_tag][2]);
 				check_image_file_for_webp_converter($img_real, $webp_on_page);
 				
