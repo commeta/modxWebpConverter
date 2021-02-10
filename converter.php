@@ -49,7 +49,9 @@ $suppliedBinaries= [
 	]
 ];
 
-$excludeSubdirectories= [// Exclude subdirectories from search
+$excludeSubdirectories= [ // Exclude subdirectories from search
+	DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'packages',
+	DIRECTORY_SEPARATOR.'tmp',
 	DIRECTORY_SEPARATOR.'manager',
 	DIRECTORY_SEPARATOR.'webp'
 ];
@@ -151,12 +153,15 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 
 
 if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
-	if( isset($json['cwebp']) && is_file(__DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp']) ){
-		$cwebp= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp'];
-	} else {
-		_die(json_encode(['status'=> 'Wrong Bin file!']));
+	if(isset($json['cwebp']) && $json['cwebp'] != 'gd'){
+		if(is_file(__DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp']) ){
+			$cwebp= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp'];
+		} else {
+			_die(json_encode(['status'=> 'Wrong Bin file!']));
+		}
 	}
-		
+	
+	
 	$dest= BASE_PATH.DIRECTORY_SEPARATOR.'webp'.$json['file'].'.webp';
 	$source= BASE_PATH.$json['file'];
 	$imagetype= exif_imagetype($source);
@@ -188,7 +193,8 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		ignore_user_abort(true);
 		
 		if($imagetype == IMAGETYPE_JPEG){
-			exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
+			if($json['cwebp'] != 'gd') exec($cwebp.' '.$param_jpeg.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
+			else $return_var= 1;
 			
 			if( // Patch if error: Unsupported color conversion request, for YCCK JPGs
 				$return_var != 0 && 
@@ -201,7 +207,8 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		}
 		
 		if($imagetype == IMAGETYPE_PNG){
-			exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
+			if($json['cwebp'] != 'gd') exec($cwebp.' '.$param_png.' "'.$source.'" -o "'.$dest.'" 2>&1', $output, $return_var);
+			else $return_var= 1;
 			
 			if( // Patch if error:
 				$return_var != 0 && 
@@ -277,9 +284,23 @@ function gdConvert($source, $dest){
 function getBinary(){ // Detect os and select converter command line tool
 	global $suppliedBinaries;
 	
+	$gd_support= check_gd();
+	$gd= false;
+	
+	if(
+		$gd_support !== false && 
+		$gd_support['WebP Support'] == 1 && 
+		$gd_support['WebP Alpha Channel Support'] == 1 && 
+		$gd_support['PNG Support'] == 1
+	){ 
+		$gd= true;
+	}
+	
+	
 	// Check disabled exec function
 	$disablefunc= explode(",", str_replace(" ", "", @ini_get("disable_functions")));
 	if(!is_callable("exec") || in_array("exec", $disablefunc)) {
+		if($gd) return "gd";
 		_die(json_encode(['status'=> 'Exec function disabled!']));	
 	}
 	
@@ -290,7 +311,10 @@ function getBinary(){ // Detect os and select converter command line tool
 	$return_var= 'Bin file for: '.PHP_OS.' not found in /connectors/converter/Binaries/';
 	$output= [];
 
-	if( !isset($suppliedBinaries[strtolower(PHP_OS)]) ) _die(json_encode(['status'=> $return_var]));
+	if( !isset($suppliedBinaries[strtolower(PHP_OS)]) ) {
+		if($gd) return "gd";
+		_die(json_encode(['status'=> $return_var]));
+	}
 	$bin= $suppliedBinaries[strtolower(PHP_OS)]; // Select OS
 	
 	if( is_array($bin) ){ // Check binary
@@ -320,13 +344,15 @@ function getBinary(){ // Detect os and select converter command line tool
 	
 	if( !isset($cwebp) ) {
 		if(is_numeric($return_var)) {
+			if($gd) return "gd";
 			_die(json_encode([
 				'status'=> 'Bin file not work! return code: '.$return_var, 
 				'mode'=> 'get_bin', 
-				'output'=> $output, 
+				'output'=> $output,
 				'return_var'=> $return_var
 			]));
 		} else {
+			if($gd) return "gd";
 			_die(json_encode([
 				'status'=> $return_var, 
 				'mode'=> 'get_bin', 
