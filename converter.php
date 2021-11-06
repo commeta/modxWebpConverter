@@ -115,6 +115,23 @@ die_clean:
 }
 
 
+if($json['mode'] == 'flg'){ // Clean deleted copy of files into /webp/ directory
+    if(is_file(MODX_CONNECTORS_PATH.'/converter/converter.flg')){
+        unlink(MODX_CONNECTORS_PATH.'/converter/converter.flg');
+        
+    	_die(json_encode([
+    		'status'=> 'complete', 
+    		'mode'=> 'flg'
+    	]));
+    }
+
+	_die(json_encode([
+		'status'=> 'complete', 
+		'PATH'=> getenv('PATH'),
+		'mode'=> 'cached'
+	]));
+}
+
 
 if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to converting
 	$images= [];
@@ -155,6 +172,11 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
 	if(isset($json['cwebp']) && $json['cwebp'] != 'gd'){
 		if($json['cwebp'] == 'system') {
+		    /*
+		    foreach(explode(':', getenv('PATH')) as $cwebp){
+		        if(is_executable($cwebp.'/cwebp')) break;
+		    }
+		    */
 			if(is_file('/usr/bin/cwebp')) $cwebp= '/usr/bin/cwebp';
 			if(is_file('/usr/local/bin/cwebp')) $cwebp= '/usr/local/bin/cwebp';
 		} else {
@@ -317,6 +339,21 @@ function getBinary(){ // Detect os and select converter command line tool
 	$output= [];
 
 
+/*
+	if(strtolower(PHP_OS) == 'linux') {
+	    foreach(explode(':', getenv('PATH')) as $cwebp){
+            if(is_executable($cwebp.'/cwebp')) {
+                $output[]= $cwebp.'/cwebp';
+                
+                exec($cwebp.'/cwebp'.' 2>&1', $output, $return_var);
+        		if($return_var == 0) {
+        			return 'system';
+        		}
+            }
+        }
+	}
+*/
+
 	if(strtolower(PHP_OS) == 'linux' && is_file('/usr/bin/cwebp')) {
 		$output[]= '/usr/bin/cwebp';
 		exec('/usr/bin/cwebp'.' 2>&1', $output, $return_var);
@@ -332,6 +369,7 @@ function getBinary(){ // Detect os and select converter command line tool
 			return 'system';
 		}
 	}
+
 
 	if( !isset($suppliedBinaries[strtolower(PHP_OS)]) ) {
 		if($gd) return "gd";
