@@ -165,13 +165,19 @@ Ext.onReady(function() {
 						let itemName= '';
 						do { // Add log message
 							itemName= 'convert_log_' + rand();
-						}	while(localStorage.getItem(itemName) != null);
+						}	while(localStorage.getItem(itemName) !== null);
 						
 						localStorage.setItem(itemName, output);
 					}
 					
 					files_iterator();
 				}
+				
+    			if(data.mode == 'flg'){
+        			document.getElementById('converter').innerHTML= "Поиск изображений";
+        			fetch_converter('get');
+    			}
+				
 			} else {
 				if(typeof( data.status ) != "undefined") {
 					document.getElementById('converter').innerHTML= data.status;
@@ -241,7 +247,7 @@ Ext.onReady(function() {
 		localStorage.removeItem(window.converter_token);
 	});
 
-	
+
 	// Check reload
 	let converter= localStorage.getItem('converter');
 	let converter_count= localStorage.getItem('converter_count');
@@ -253,6 +259,11 @@ Ext.onReady(function() {
 		if(converter_count > 0 && count_parallel_tabs < concurent_tasks) {
 			window.count_threads++;
 			files_iterator();
+		}
+		
+		// Autostart after clean cache, === -1 is Off, === 0 is On
+		if(converter_count === 0){
+		    fetch_converter('flg');
 		}
 	}
 });
