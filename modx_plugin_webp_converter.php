@@ -61,7 +61,7 @@ if(
 ) {
 	$options= [xPDO::OPT_CACHE_KEY=>'webp_on_page']; // Clear webp modx cache
 	$modx->cacheManager->clean($options);
-	file_put_contents(MODX_CONNECTORS_PATH.'/converter/converter.flg', '');
+	file_put_contents(MODX_CONNECTORS_PATH.'/converter/converter.flg', ''); // Autostart search new files, after reload admin page
 }
 
 
