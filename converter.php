@@ -115,7 +115,7 @@ die_clean:
 }
 
 
-if($json['mode'] == 'flg'){ // Clean deleted copy of files into /webp/ directory
+if($json['mode'] == 'flg'){ // Autostart search and convert new files, when cleaning cache
     if(is_file(MODX_CONNECTORS_PATH.'/converter/converter.flg')){
         unlink(MODX_CONNECTORS_PATH.'/converter/converter.flg');
         
