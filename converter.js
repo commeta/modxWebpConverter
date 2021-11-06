@@ -173,10 +173,10 @@ Ext.onReady(function() {
 					files_iterator();
 				}
 				
-    			if(data.mode == 'flg'){
-        			document.getElementById('converter').innerHTML= "Поиск изображений";
-        			fetch_converter('get');
-    			}
+    				if(data.mode == 'flg'){
+        				document.getElementById('converter').innerHTML= "Поиск изображений";
+        				fetch_converter('get');
+    				}
 				
 			} else {
 				if(typeof( data.status ) != "undefined") {
