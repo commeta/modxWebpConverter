@@ -20,7 +20,7 @@
  * https://github.com/commeta/modxWebpConverter
  * https://webdevops.ru/blog/webp-converter-plugin-modx.html
  * 
- * Copyright 2020 commeta <dcs-spb@ya.ru>
+ * Copyright 2021 commeta <dcs-spb@ya.ru>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ if(
 ) {
 	$options= [xPDO::OPT_CACHE_KEY=>'webp_on_page']; // Clear webp modx cache
 	$modx->cacheManager->clean($options);
+	file_put_contents(MODX_CONNECTORS_PATH.'/converter/converter.flg', '');
 }
 
 
