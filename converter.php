@@ -286,12 +286,15 @@ function gdConvert($source, $dest){
 		break;
 		case IMAGETYPE_PNG:
 			$img= imagecreatefrompng($source);
+			imagepalettetotruecolor($img);
+			imagealphablending($img, true);
+			imagesavealpha($img, true);
 		break;
 		default:
 			return false;
 	}
 
-	$return_var= imageWebp($img, $dest, 80);
+	$return_var= imageWebp($img, $dest, 75);
 	imagedestroy($img);
 				
 	if($return_var && filesize($dest) % 2 == 1) { // No null byte at the end of the file
