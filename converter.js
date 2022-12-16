@@ -1,4 +1,4 @@
-/*! converter.js | (c) 2021 commeta <dcs-spb@ya.ru> Apache 2.0 License | https://github.com/commeta/modxWebpConverter, https://webdevops.ru/blog/webp-converter-plugin-modx.html */
+/*! converter.js | (c) 2022 commeta <dcs-spb@ya.ru> Apache 2.0 License | https://github.com/commeta/modxWebpConverter, https://webdevops.ru/blog/webp-converter-plugin-modx.html */
 
 Ext.onReady(function() {
 	"use strict";
@@ -249,8 +249,9 @@ Ext.onReady(function() {
 
 
 	// Check reload
-	let converter= localStorage.getItem('converter');
-	let converter_count= localStorage.getItem('converter_count');
+	let converter= localStorage.getItem('converter') ? localStorage.getItem('converter') :  Date.now();
+	let converter_count= localStorage.getItem('converter_count') ? localStorage.getItem('converter_count') : "0";
+	
 	
 	if(converter && converter_count) {
 		converter_count= parseInt(converter_count);
