@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////////////////
 // Init
 
-$param_jpeg= "-metadata none -quiet -pass 10 -m 6 -mt -q 70 -low_memory";
+$param_jpeg= "-metadata none -quiet -pass 10 -m 6 -mt -q 85 -low_memory";
 $param_png= "-metadata none -quiet -pass 10 -m 6 -alpha_q 85 -mt -alpha_filter best -alpha_method 1 -q 70 -low_memory";
 
 $suppliedBinaries= [
