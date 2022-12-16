@@ -173,9 +173,9 @@ if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/
 		if($json['cwebp'] == 'system') {
 			$cwebp= false;
 			
-		    foreach(explode(':', getenv('PATH')) as $cwebp){
-		        if(is_executable($cwebp.'/cwebp')) $cwebp= $cwebp.'/cwebp';
-		    }
+			foreach(explode(':', getenv('PATH')) as $cwebp){
+				if(is_executable($cwebp.'/cwebp')) $cwebp= $cwebp.'/cwebp';
+			}
 		    
 			if(!$cwebp) _die(json_encode(['status'=> 'cwebp not found in system PATH: '. getenv('PATH')]));
 		} else {
@@ -342,16 +342,16 @@ function getBinary(){ // Detect os and select converter command line tool
 
 
 	if(strtolower(PHP_OS) == 'linux') {
-	    foreach(explode(':', getenv('PATH')) as $cwebp){
-            if(is_executable($cwebp.'/cwebp')) {
-                $output[]= $cwebp.'/cwebp';
+		foreach(explode(':', getenv('PATH')) as $cwebp){
+			if(is_executable($cwebp.'/cwebp')) {
+				$output[]= $cwebp.'/cwebp';
                 
-                exec($cwebp.'/cwebp'.' 2>&1', $output, $return_var);
-        		if($return_var == 0) {
-        			return 'system';
-        		}
-            }
-        }
+				exec($cwebp.'/cwebp'.' 2>&1', $output, $return_var);
+				if($return_var == 0) {
+					return 'system';
+				}
+			}
+		}
 	}
 
 
