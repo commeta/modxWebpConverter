@@ -4,7 +4,7 @@
  * https://github.com/commeta/modxWebpConverter
  * https://webdevops.ru/blog/webp-converter-plugin-modx.html
  * 
- * Copyright 2021 commeta <dcs-spb@ya.ru>
+ * Copyright 2022 commeta <dcs-spb@ya.ru>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,8 +116,8 @@ die_clean:
 
 
 if($json['mode'] == 'flg'){ // Autostart search and convert new files, when cleaning cache
-    if(is_file(MODX_CONNECTORS_PATH.'/converter/converter.flg')){
-        unlink(MODX_CONNECTORS_PATH.'/converter/converter.flg');
+    if(is_file(MODX_CONNECTORS_PATH.'converter/converter.flg')){
+        unlink(MODX_CONNECTORS_PATH.'converter/converter.flg');
         
     	_die(json_encode([
     		'status'=> 'complete', 
@@ -168,17 +168,16 @@ if($json['mode'] == 'get'){ // Get *.jp[e]g and *.png files list, for queue to c
 }
 
 
-
 if($json['mode'] == 'convert'){ // Converting *.jp[e]g and *.png files to /webp/[*/]*.webp
 	if(isset($json['cwebp']) && $json['cwebp'] != 'gd'){
 		if($json['cwebp'] == 'system') {
-		    /*
+			$cwebp= false;
+			
 		    foreach(explode(':', getenv('PATH')) as $cwebp){
-		        if(is_executable($cwebp.'/cwebp')) break;
+		        if(is_executable($cwebp.'/cwebp')) $cwebp= $cwebp.'/cwebp';
 		    }
-		    */
-			if(is_file('/usr/bin/cwebp')) $cwebp= '/usr/bin/cwebp';
-			if(is_file('/usr/local/bin/cwebp')) $cwebp= '/usr/local/bin/cwebp';
+		    
+			if(!$cwebp) _die(json_encode(['status'=> 'cwebp not found in system PATH: '. getenv('PATH')]));
 		} else {
 			if(is_file(__DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp']) ){
 				$cwebp= __DIR__.DIRECTORY_SEPARATOR.'Binaries'.DIRECTORY_SEPARATOR.$json['cwebp'];
@@ -302,7 +301,7 @@ function gdConvert($source, $dest){
 	}
 				
 	if($return_var){
-		$return_var= 0;
+		//$return_var= 0;
 		$output[]= "Info, use PHP GD for convert image !";
 	}
 	
@@ -342,7 +341,6 @@ function getBinary(){ // Detect os and select converter command line tool
 	$output= [];
 
 
-/*
 	if(strtolower(PHP_OS) == 'linux') {
 	    foreach(explode(':', getenv('PATH')) as $cwebp){
             if(is_executable($cwebp.'/cwebp')) {
@@ -355,23 +353,6 @@ function getBinary(){ // Detect os and select converter command line tool
             }
         }
 	}
-*/
-
-	if(strtolower(PHP_OS) == 'linux' && is_file('/usr/bin/cwebp')) {
-		$output[]= '/usr/bin/cwebp';
-		exec('/usr/bin/cwebp'.' 2>&1', $output, $return_var);
-		if($return_var == 0) {
-			return 'system';
-		}
-	}
-
-	if(strtolower(PHP_OS) == 'linux' && is_file('/usr/local/bin/cwebp')) {
-		$output[]= '/usr/local/bin/cwebp';
-		exec('/usr/local/bin/cwebp'.' 2>&1', $output, $return_var);
-		if($return_var == 0) {
-			return 'system';
-		}
-	}
 
 
 	if( !isset($suppliedBinaries[strtolower(PHP_OS)]) ) {
@@ -381,7 +362,6 @@ function getBinary(){ // Detect os and select converter command line tool
 	$bin= $suppliedBinaries[strtolower(PHP_OS)]; // Select OS
 	
 	if( is_array($bin) ){ // Check binary
-
 		foreach($bin as $b){
 			if( is_file($cwebp_path.$b) ){
 				if( !is_executable($cwebp_path.$b) ) chmod($cwebp_path.$b, 0755);
