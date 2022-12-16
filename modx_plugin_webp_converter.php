@@ -155,15 +155,8 @@ if( // replace jpg and png images to webp
 		if(count($result)){ // Search images in img tag
 			foreach($result[0] as $img_tag)	{
 				$img_tag= str_replace("'", '"', $img_tag); // src
-				preg_match('/(src)=("[^"]*")/i', $img_tag, $img[$img_tag]);						
-				$img_real= str_replace('"', '', $img[$img_tag][2]);
-				check_image_file_for_webp_converter($img_real, $webp_on_page);
 				
-				preg_match('/(data-src)=("[^"]*")/i', $img_tag, $img[$img_tag]); // data-src					
-				$img_real= str_replace('"', '', $img[$img_tag][2]);
-				check_image_file_for_webp_converter($img_real, $webp_on_page);
-				
-				preg_match('/(data-background)=("[^"]*")/i', $img_tag, $img[$img_tag]); // data-background					
+				preg_match('/(src|data-src|data-background)=("[^"]*")/i', $img_tag, $img[$img_tag]);						
 				$img_real= str_replace('"', '', $img[$img_tag][2]);
 				check_image_file_for_webp_converter($img_real, $webp_on_page);
 
