@@ -151,7 +151,7 @@ if( // replace jpg and png images to webp
 	if( empty($cached_webp_on_page) ){
 		$webp_on_page= [];
 		
-		preg_match_all('/<img[^>]+>/i', $output, $result);
+		preg_match_all('/<(img|div|section|footer)[^>]+>/i', $output, $result);
 		if(count($result)){ // Search images in img tag
 			foreach($result[0] as $img_tag)	{
 				$img_tag= str_replace("'", '"', $img_tag); // src
@@ -163,6 +163,10 @@ if( // replace jpg and png images to webp
 				$img_real= str_replace('"', '', $img[$img_tag][2]);
 				check_image_file_for_webp_converter($img_real, $webp_on_page);
 				
+				preg_match('/(data-background)=("[^"]*")/i', $img_tag, $img[$img_tag]); // data-background					
+				$img_real= str_replace('"', '', $img[$img_tag][2]);
+				check_image_file_for_webp_converter($img_real, $webp_on_page);
+
 				preg_match('/(srcset)=("[^"]*")/i', $img_tag, $img[$img_tag]); // srcset
 				$srcset= explode(',', str_replace('"', '', $img[$img_tag][2]));
 				foreach($srcset as $src_item){
