@@ -62,7 +62,7 @@ for( // CRON job 3, multithreading example, four core
 define("CRON_LOG_FILE", CRON_SITE_ROOT . 'cron/log/cron.log'); // false switched off
 define("CRON_DAT_FILE", CRON_SITE_ROOT . 'cron/dat/cron.dat');
 
-define("CRON_DELAY", 180);  // interval between requests in seconds, 0 to max int, increases the accuracy of the job timer hit
+define("CRON_DELAY", 0);  // interval between requests in seconds, 0 to max int, increases the accuracy of the job timer hit
 define("CRON_LOG_ROTATE_MAX_SIZE", 10 * 1024 * 1024); // 10 in MB
 define("CRON_LOG_ROTATE_MAX_FILES", 5);
 define("CRON_URL_KEY", 'my_secret_key'); // change this!
@@ -197,6 +197,7 @@ if(
 
 	function _die($return= ''){
 		tick_interrupt('_die');
+		write_cron_session();
 		$GLOBALS['cron_limit_exception']->disable();
 		die($return);
 	}
@@ -570,9 +571,11 @@ if(
 		//###########################################
 		// check jobs
 		main_job_dispatcher();
+		
 		if(CRON_DELAY == 0){
 			for($i= 0; $i<= 600; $i++){
 				main_job_dispatcher();
+				write_cron_session();
 				sleep(1);
 			}
 		}
