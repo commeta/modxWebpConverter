@@ -134,83 +134,104 @@ if(!function_exists('check_image_file_for_webp_converter')) {
 	}
 }
 
-
 if( // replace jpg and png images to webp
 	$modx->event->name == 'OnWebPagePrerender' && 
 	stripos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false
 ){
-	// If replacing is disabled for logged-in users and the user is logged in, exit
-	if ($disable_replacing_for_logged_user && $modx->user->hasSessionContext('mgr'))
-		return '';
+    // If replacing is disabled for logged-in users and the user is logged in, exit
+    if ($disable_replacing_for_logged_user && $modx->user->hasSessionContext('mgr'))
+        return '';
 
-	// Set up caching options
-	$options = [xPDO::OPT_CACHE_KEY => 'webp_on_page'];
-	$cache_key = md5(MODX_SITE_URL . $_SERVER['REQUEST_URI']);
+    // Set up caching options
+    $options = [xPDO::OPT_CACHE_KEY => 'webp_on_page'];
+    $cache_key = md5(MODX_SITE_URL . $_SERVER['REQUEST_URI']);
 
-	// Try to get cached WebP replacements
-	$cached_webp_on_page = $modx->cacheManager->get($cache_key, $options);
-	$output = &$modx->resource->_output;
+    // Try to get cached WebP replacements
+    $cached_webp_on_page = $modx->cacheManager->get($cache_key, $options);
+    $output = &$modx->resource->_output;
 
-	if (empty($cached_webp_on_page)) {
-		// If no cache, process the page
-		$webp_on_page = [];
+    if (empty($cached_webp_on_page)) {
+        // If no cache, process the page
+        $webp_on_page = [];
 
-		// Load HTML and get relevant elements
-		$dom = new DOMDocument();
-		@$dom->loadHTML($output, LIBXML_NOERROR);
-		$images = $dom->getElementsByTagName('img');
-		$divs = $dom->getElementsByTagName('div');
-		$sections = $dom->getElementsByTagName('section');
-		$footers = $dom->getElementsByTagName('footer');
+        // Load HTML and get relevant elements
+        $dom = new DOMDocument();
+        @$dom->loadHTML($output, LIBXML_NOERROR);
+        $images = $dom->getElementsByTagName('img');
+        $divs = $dom->getElementsByTagName('div');
+        $sections = $dom->getElementsByTagName('section');
+        $footers = $dom->getElementsByTagName('footer');
+        $styles = $dom->getElementsByTagName('style');
 
-		// Combine all elements into one array
-		$elements = array_merge(
-			iterator_to_array($images),
-			iterator_to_array($divs),
-			iterator_to_array($sections),
-			iterator_to_array($footers)
-		);
+        // Combine all elements into one array
+        $elements = array_merge(
+            iterator_to_array($images),
+            iterator_to_array($divs),
+            iterator_to_array($sections),
+            iterator_to_array($footers)
+        );
 
-		// Process each element
-		foreach ($elements as $element) {
-			$src = $element->getAttribute('src');
-			$dataSrc = $element->getAttribute('data-src');
-			$dataBackground = $element->getAttribute('data-background');
-			$srcset = $element->getAttribute('srcset');
+        // Process each element
+        foreach ($elements as $element) {
+            $src = $element->getAttribute('src');
+            $dataSrc = $element->getAttribute('data-src');
+            $dataBackground = $element->getAttribute('data-background');
+            $srcset = $element->getAttribute('srcset');
+            $style = $element->getAttribute('style');
 
-			// Check various source attributes for WebP conversion
-			$sources = array($src, $dataSrc, $dataBackground);
-			foreach ($sources as $source) {
-				check_image_file_for_webp_converter($source, $webp_on_page);
-			}
+            // Check various source attributes for WebP conversion
+            $sources = array($src, $dataSrc, $dataBackground);
+            foreach ($sources as $source) {
+                check_image_file_for_webp_converter($source, $webp_on_page);
+            }
 
-			// Process srcset if present
-			if ($srcset) {
-				$srcsetArray = explode(',', $srcset);
-				foreach ($srcsetArray as $srcsetItem) {
-					$srcsetItemArray = explode(' ', trim($srcsetItem));
-					check_image_file_for_webp_converter($srcsetItemArray[0], $webp_on_page);
-				}
-			}
-		}
+            // Process srcset if present
+            if ($srcset) {
+                $srcsetArray = explode(',', $srcset);
+                foreach ($srcsetArray as $srcsetItem) {
+                    $srcsetItemArray = explode(' ', trim($srcsetItem));
+                    check_image_file_for_webp_converter($srcsetItemArray[0], $webp_on_page);
+                }
+            }
 
-		// Add some additional replacements
-		$webp_on_page['/webp/webp/'] = '/webp/';
-		$webp_on_page['//webp/'] = '/webp/';
-		$webp_on_page['.webp.webp'] = '.webp';
+            // Process inline style if present
+            if ($style) {
+                preg_match_all('/url\s*\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)/i', $style, $matches);
+                if (!empty($matches[1])) {
+                    foreach ($matches[1] as $url) {
+                        check_image_file_for_webp_converter($url, $webp_on_page);
+                    }
+                }
+            }
+        }
 
-		// Apply replacements if any found
-		if (count($webp_on_page))
-			$output = str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
+        // Process <style> tags
+        foreach ($styles as $style) {
+            preg_match_all('/url\s*\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)/i', $style->nodeValue, $matches);
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $url) {
+                    check_image_file_for_webp_converter($url, $webp_on_page);
+                }
+            }
+        }
 
-		// Cache the results
-		$modx->cacheManager->set($cache_key, serialize($webp_on_page), 0, $options);
-	} else {
-		// If cache exists, use it
-		$webp_on_page = unserialize($cached_webp_on_page);
-		if (count($webp_on_page)) {
-			$output = str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
-		}
-	}
-	return '';
+        // Add some additional replacements
+        $webp_on_page['/webp/webp/'] = '/webp/';
+        $webp_on_page['//webp/'] = '/webp/';
+        $webp_on_page['.webp.webp'] = '.webp';
+
+        // Apply replacements if any found
+        if (count($webp_on_page))
+            $output = str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
+
+        // Cache the results
+        $modx->cacheManager->set($cache_key, serialize($webp_on_page), 0, $options);
+    } else {
+        // If cache exists, use it
+        $webp_on_page = unserialize($cached_webp_on_page);
+        if (count($webp_on_page)) {
+            $output = str_replace(array_keys($webp_on_page), array_values($webp_on_page), $output);
+        }
+    }
+    return '';
 }
