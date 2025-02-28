@@ -134,10 +134,7 @@ if(!function_exists('check_image_file_for_webp_converter')) {
 	}
 }
 
-if( // replace jpg and png images to webp
-	$modx->event->name == 'OnWebPagePrerender' && 
-	stripos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false
-){
+if($modx->event->name == 'OnWebPagePrerender'){ // replace jpg and png images to webp
     // If replacing is disabled for logged-in users and the user is logged in, exit
     if ($disable_replacing_for_logged_user && $modx->user->hasSessionContext('mgr'))
         return '';
