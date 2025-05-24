@@ -1,3 +1,5 @@
+# modxWebpConverter
+
 ![modxWebpConverter](https://raw.githubusercontent.com/commeta/modxWebpConverter/master/screenShot.png "modxWebpConverter")
 
 ## modxWebpConverter, руководство - [Webp конвертер для MODX Revo](https://webdevops.ru/blog/webp-converter-plugin-modx.html)
